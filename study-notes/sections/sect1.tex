@@ -1,0 +1,351 @@
+\section{Introduction to Linear Programming}
+\begin{enumerate}
+\item MATH3901 is about \emph{linear programming} (LP), a special type of
+optimization problem which, as you would expect, involves ``linear'' things
+only.  While only linearity is allowed in LP, it is still quite flexible and
+can be applied in many real-life situations, e.g., factory productions
+\faIcon{cheese}, military plannings \faIcon{bomb} (this is indeed a major
+motivation for developments in LP!), etc.
+
+\item Due to the linear nature, linear programming problems are well-studied
+and many efficient approaches for solving them have already been developed.  A
+natural question is then, \emph{why} are we still studying linear programming
+when many performant LP solvers are available (e.g., in common coding languages
+like Python)? A possible answer is that while computer \faIcon{desktop} can
+assist you to solve LP problems efficiently, the responsibility of
+\emph{formulating the right LP problem} (``asking the right question'') and
+\emph{using the tools properly} (easier said than done!) still lies upon the
+user (you!), so it is still important to understand the theoretical aspects of
+linear programming and how the algorithms for solving LPs work.
+
+Because of that, instead of focusing on what computers can do very well
+(performing the often tedious computations to solve numerous LPs), here we will
+emphasize more on the \emph{conceptual} and \emph{theoretical} aspects of LPs
+and the study of \emph{algorithms} for solving LPs. \begin{note} But here we
+will still solve some relatively ``simple'' LP problems that require few
+computations, to better understand the concepts and algorithms.
+\end{note}
+\end{enumerate}
+\subsection{Definition of Linear Programming Problem}
+\begin{enumerate}
+\item Of course, the first thing we should do is to \emph{define} what a linear
+programming problem is. As suggested earlier, it is an \defn{optimization
+problem}, which can be expressed as follows in general:
+\begin{align*}
+\text{min/max}\quad&f(\vect{x}) \\
+\text{subject to (s.t.)}\quad&\vect{x}=(x_1,\dotsc,x_n)\in S
+\end{align*}
+where:
+\begin{itemize}
+\item \(f:\R^n\to\R\) is the \defn{objective function};
+\item \(S\subseteq \R^n\) is the \defn{feasible region}, and every \(\vect{x}\in S\) is called a \defn{feasible solution} or \defn{feasible point};
+\item \(f^*=\min/\max\{f(\vect{x}):\vect{x}\in S\}\) is the \defn{optimal
+value} (always unique, if exists), and \emph{every}
+\(\vect{x}^{*}\in S\) with \(f(\vect{x}^{*})=f^{*}\) is called an
+\defn{optimal solution} (not unique in general!).
+\end{itemize}
+The variables \(x_1,\dotsc,x_n\) are called \defn{decision variables}.
+Decision variables that are not involved in any constraints (coming from
+feasible region) are known as \defn{free variables}.
+
+All vectors in MATH3901 are assumed to be \emph{column
+vectors}. For convenience in notations, we shall denote the column vector \(\vect{x}=\mqty[x_1&\cdots&x_n]^{T}\) by \((x_1,\dotsc,x_n)\) if entries are to be emphasized.
+
+\item \textbf{Defining LP problems.}
+Here we shall only focus on the special case where (i) the objective function
+\(f\) is \underline{linear} and (ii) the feasible region \(S\) is described by
+\emph{finitely many} \underline{linear} equalities or (weak)
+inequalities\footnote{Allowing \emph{infinitely many} linear equalities or
+inequalities would give us so much flexibility that even \emph{nonlinear}
+constraints can be described!}, which is known as a \defn{linear programming
+problem}:
+\begin{align*}
+\text{min/max}\quad&f(\vect{x})=\vect{c}^{T}\vect{x}=c_1x_1+\dotsb+c_nx_n \\
+\text{s.t.}\quad&\vect{a}_j^{T}\vect{x}\le/=/\ge b_j \text{ for any \(j=1,\dotsc,m\)}
+\end{align*}
+where \(\vect{c},\vect{a}_1,\dotsc,\vect{a}_m\in\R^n\) and \(b_1,\dotsc,b_m\in\R\).
+Here the feasible region can be expressed as \(S=\{\vect{x}\in\R^n:\vect{a}_j^{T}\vect{x}\le/=/\ge b_j\text{ for any \(j=1,\dotsc,m\)}\}\).
+\begin{note}
+For discussions on general optimization problems, see MATH3904.
+\end{note}
+
+\item \textbf{Examples of LP problems.}
+\begin{enumerate}[label={(\arabic*)}]
+\item \begin{align*}
+\text{min}\quad&2x_1+3x_2-x_3 \\
+\text{s.t.}\quad&x_1+2x_4\le 3\\
+\quad&x_2+x_3+x_4=1 \\
+\quad&x_1+x_3-2x_4\ge -2 \\
+\quad&x_1,x_2,x_4\ge 0 \\
+\quad&x_3\le 0
+\end{align*}
+\begin{note}
+Here we have \(\vect{c}=(2,3,-1,0)\), \(\vect{a}_1=(1,0,0,2)\), \(b_1=3\), etc.
+\end{note}
+\item \begin{align*}
+\text{min}\quad&x_1-x_2 \\
+\text{s.t.}\quad&x_1+x_2+x_3=1\\
+\quad&2x_2-3x_3=4 \\
+\quad&x_1,x_2,x_3\ge 0
+\end{align*}
+\end{enumerate}
+We can see that the second example is somewhat ``simple'' as the only
+inequality constraints are for nonnegativity of \(x_1\), \(x_2\), and \(x_3\),
+which are quite ``simple'' and the rest are only \emph{equality} constraints.
+On the other hand, the first one involves some more complicated inequality
+constraints and thus appears to be harder to deal with. In fact, the second LP
+problem is in the so-called \emph{standard form}, a ``nice'' form of LP problem
+that is easy to solve.
+
+\item \textbf{Standard form of LP problems.} A LP problem is in \defn{standard
+form} if it takes the following form:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+where \(\vect{c}\in\R^n\), \(A\in\R^{m\times n}\) (an \(m\times n\) matrix with
+real entries), and \(\vect{b}\in\R^m\).
+
+\begin{remark}
+\item Here, \(\vect{x}\ge \vect{0}\) carries the componentwise meaning, i.e.,
+\(x_1,\dotsc,x_n\ge 0\).
+\item \(A\vect{x}=\vect{b}\) collects all possible \emph{equality} constraints
+on the decision variables \(x_1,\dotsc,x_n\). To see this, we can identify the
+\(j\)th row of \(A\) as \(\vect{a}_j^{T}\), and write
+\(\vect{b}=(b_1,\dotsc,b_m)\), Then, \(A\vect{x}=\vect{b}\) just refers to the
+following system of linear equations:
+\[
+\begin{cases}
+\vect{a}_1^{T}\vect{x}=b_1 \\
+\vect{a}_2^{T}\vect{x}=b_2 \\
+\qquad\vdots \\
+\vect{a}_m^{T}\vect{x}=b_m \\
+\end{cases}
+\]
+\end{remark}
+
+\item \textbf{Equivalence between LP problems.} While not every LP is in
+standard form (of course!), it turns out that it is always possible to
+\emph{transform} a LP problem into a LP problem \emph{in standard form} such
+that the two LP problems are \emph{equivalent}. Here, two LP problems of
+minimization\footnote{By adding a negative sign to the objective function if
+necessary, we can always convert a maximization problem to a minimization
+problem. Hence it suffices to focus on LP problems of minimization.} are said
+to be \defn{equivalent} if given an \emph{arbitrary} feasible solution to
+\emph{each} problem, one can construct a feasible solution to the \emph{other}
+system, \emph{with the same objective value}.
+
+More specifically, to show that two LP problems (A) and (B) are equivalent, we
+need to carry out the following two-step process:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{\(\text{(A)}\to\text{(B)}\):} Fix any feasible solution
+\(\vect{x}_{A}\) to (A). Based on it, construct a solution
+\(\vect{x}_A'=u(\vect{x}_A)\) such that:
+\begin{enumerate}
+\item \(\vect{x}_A'\) is a feasible solution to (B).
+\item
+\(\operatorname{obj}_{(A)}(\vect{x}_A)=\operatorname{obj}_{(B)}(\vect{x}_A')\)
+where \(\operatorname{obj}_{(A)}\) and \(\operatorname{obj}_{(B)}\) are the objective functions for (A) and (B) respectively.
+\end{enumerate}
+\item \emph{\(\text{(B)}\to\text{(A)}\):} Fix any feasible solution
+\(\vect{x}_{B}\) to (B). Based on it, construct a solution
+\(\vect{x}_B'=v(\vect{x}_B)\) such that:
+\begin{enumerate}
+\item \(\vect{x}_B'\) is a feasible solution to (A).
+\item \(\operatorname{obj}_{(A)}(\vect{x}_B')=\operatorname{obj}_{(B)}(\vect{x}_B)\).
+\end{enumerate}
+\end{enumerate}
+We can then see that the key \faIcon{key} for showing the equivalence is to
+figure out what the mappings \(u\) and \(v\) should be.
+
+\begin{center}
+\begin{tikzpicture}
+\draw[] (0,0) rectangle (2,2);
+\node[] () at (1,1) {(A)};
+\draw[] (4,0) rectangle (6,2);
+\node[] () at (5,1) {(B)};
+\draw[-Latex] (1,2.5) to[bend left] node[auto]{\(u\)} (5,2.5);
+\draw[-Latex] (5,-0.5) to[bend left] node[auto]{\(v\)} (1,-0.5);
+\node[] () at (1,2.2) {\(\vect{x}_A\)};
+\node[] () at (5,2.2) {\(\vect{x}_A'\)};
+\node[] () at (1,-0.2) {\(\vect{x}_B'\)};
+\node[] () at (5,-0.2) {\(\vect{x}_B\)};
+\end{tikzpicture}
+\end{center}
+
+To understand this better, let us consider a simple example about proving the
+equivalence between the following two LP problems (A) and (B):
+
+(A): \begin{align*}
+\text{min}\quad&x_1 \\
+\text{s.t.}\quad&x_1+x_2\le 1\\
+\quad&x_1,x_2\ge 0
+\end{align*}
+
+(B): \begin{align*}
+\text{min}\quad&x_1 \\
+\text{s.t.}\quad&x_1+x_2+x_3=1\\
+\quad&x_1,x_2,x_3\ge 0
+\end{align*}
+
+\begin{pf}
+Fix any feasible solution \(\vect{x}=(a,b)\) to (A). Then, consider the
+solution \((x_1,x_2,x_3)=(a,b,1-a-b)\) to (B). It is feasible for (B) because
+\(1-a-b\ge 0\) (and \(a,b\ge 0\) follows from the feasibility of solution for
+(A)), and \(x_1+x_2+x_3=a+b+(1-a-b)=1\). Also, as these two solutions have the
+same first entry, they have the same objective value \(a\) in either LP problem.
+
+Now fix any feasible solution \(\vect{x}=(a,b,c)\) to (B). It is easy to see
+that the solution \((x_1,x_2)=(a,b)\) is feasible for (A), since \(a+b\le
+a+b+c=1\) (as \(c\ge 0\)) and \(a,b\ge 0\). Besides these two solutions again
+have the same first entry, hence same objective value.
+\end{pf}
+
+\item \textbf{Same optimal values for two equivalent LP problems.}
+\begin{proposition}
+\label{prp:equiv-lp-same-optim}
+Two equivalent LP problems always have the same optimal values.
+\end{proposition}
+\begin{pf}
+First, let us express the two LP problems as:
+
+(P):
+\begin{align*}
+\text{min}\quad&f(\vect{x}) \\
+\text{s.t.}\quad&\vect{x}\in A
+\end{align*}
+
+(Q):
+\begin{align*}
+\text{min}\quad&g(\vect{y}) \\
+\text{s.t.}\quad&\vect{y}\in B
+\end{align*}
+
+Let \(f^*\) and \(g^*\) denote the optimal values of (P) and (Q) respectively,
+with \(\vect{x}^*\in A\) and \(\vect{y}^*\in B\) being corresponding optimal
+solutions (not necessarily unique). Then we can write \(f^*=f(\vect{x}^*)\) and
+\(g^*=g(\vect{y}^*)\). We will prove \(f^*=g^*\) by showing (i) \(f^*\le g^*\) and
+(ii) \(g^*\le f^*\).
+
+\begin{itemize}
+\item \underline{\(f^*\le g^*\):} As \(\vect{y}^*\in B\), by the equivalence,
+there is a mapping \(v\) such that \(v(\vect{y}^*)\in A\) and
+\(f(v(\vect{y}^*))=g(\vect{y}^*)=g^*\). Thus,
+\(f^*=f(\vect{x}^*)\overset{\text{(\(\vect{x}^*\) optimal)}}{\le}
+f(v(\vect{y}^*)) =g^* \).
+\item \underline{\(g^*\le f^*\):} As \(\vect{x}^*\in A\), by the equivalence,
+there is a mapping \(u\) such that \(u(\vect{x}^*)\in B\) and
+\(g(u(\vect{x}^*))=f(\vect{x}^*)=f^*\).  Thus,
+\(g^*=g(\vect{y}^*)\overset{(\text{\(\vect{y}^*\) optimal})}{\le}
+g(u(\vect{x}^*))=f^*\).
+\end{itemize}
+\end{pf}
+\item \textbf{Reduction to standard form.}
+\Cref{prp:equiv-lp-same-optim} suggests a handy approach to solve LP problem,
+namely by converting/reducing it to an \emph{equivalent} standard form LP
+problem, and solve the latter problem instead of the original, which can be
+done easily in general (many efficient algorithms are available). This approach
+allows us to:
+\begin{itemize}
+\item obtain the optimal value (if exists) readily from the latter LP problem
+(by \Cref{prp:equiv-lp-same-optim});
+\item obtain also optimal solutions in the original LP problem, by constructing
+from optimal solutions in the latter LP problem (by equivalence).
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}
+\node[draw] (any) at (0,0) {Any LP problem};
+\node[draw] (sf) at (6,0) {Standard form LP problem};
+\node[draw] (os) at (12,0) {Optimal solution};
+\draw[-Latex] (any) --node[midway, above]{Reduction} (sf);
+\draw[-Latex] (sf) --node[midway, above]{Algorithm} (os);
+\draw[Latex-Latex] (any.south) to[bend right] node[auto, swap]{same optimal value} (sf.south);
+\draw[-Latex] (os.north) to[bend right] node[auto, below=0.4cm]{construct optimal solution for original} (any.north);
+\draw[-Latex, dashed] (os.south) --node[midway, below]{deduce} (4.5,-1.5);
+\end{tikzpicture}
+\end{center}
+The following theorem proposes one systematic method for converting any LP
+problem to a LP problem in standard form.
+
+\begin{theorem}
+\label{thm:to-std-form-lp}
+Given any LP problem, performing the following steps on it would yield a LP
+problem in \emph{standard form} and \emph{equivalent} to the given LP problem:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Changing to minimization:} If necessary, convert maximization to
+minimization by changing the objective function \(f\to -f\).
+\item \emph{Eliminating inequality constraints:} For every inequality
+constraint, introduce \defn{slack variables}/\defn{surplus variables} \(s_j\ge
+0\) as follows:
+\begin{itemize}
+\item \emph{(``\(\le\)'' case)} Change \(\sum_{i=1}^{n}a_{ji}x_i\le b_j\to(\sum_{i=1}^{n}a_{ji}x_i)\vc{+s_j}=b_j\).
+\item \emph{(``\(\ge\)'' case)} Change \(\sum_{i=1}^{n}a_{ji}x_i\ge b_j\to(\sum_{i=1}^{n}a_{ji}x_i)\vc{-s_j}=b_j\).
+\end{itemize}
+\item \emph{Eliminating free variables:} Change every free variable \(x_i\to
+x_i^{+}-x_i^{-}\), where \(x_i^{+}=\begin{cases}
+x_i&\text{if \(x_i>0\)}, \\
+0&\text{if \(x_i\le 0\)}
+\end{cases}
+\) and \(x_i^{-}=\begin{cases}
+0&\text{if \(x_i\ge 0\)}, \\
+\rc{-}x_i&\text{if \(x_i<0\)}
+\end{cases}
+\) denote the \defn{positive
+part} and \defn{negative part} of \(x_i\) respectively.
+\end{enumerate}
+\end{theorem}
+\begin{pf}
+Omitted; see below for an example that illustrates the main idea.
+\end{pf}
+
+\begin{note}
+After performing the steps as suggested in \Cref{thm:to-std-form-lp}, we would
+get a LP problem of \emph{minimization} with only equality constraints (except
+the inequality constraints about nonnegativity of decision variables), and
+\emph{nonnegative} decision variables coming from three sources: (i) original
+\(x_i\)'s, (ii) \(x_i^{+}\)'s and \(x_i^{-}\)'s, and (iii) slack variables
+\(s_j\)'s. Thus the resulting LP problem is in standard form.
+\end{note}
+
+\textbf{Example:} Consider the following LP problem (A):
+\begin{align*}
+\text{max}\quad&-x_1+3x_2 \\
+\text{s.t.}\quad&x_1+x_2\ge 3\\
+\quad&3x_1+2x_2=14 \\
+\quad&x_1\ge 0
+\end{align*}
+Now we carry out the steps as indicated in \Cref{thm:to-std-form-lp}:
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Changing to minimization:} Change \(-x_1+3x_2\to x_1-3x_2\) and \(\max\to\min\).
+\item \emph{Eliminating inequality constraints:} Introduce a slack variable
+\(x_3\ge 0\) (notation does not matter), and change \(x_1+x_2\ge 3\to
+x_1+x_2\vc{-x_3}=3\) (and also add an inequality constraint \(x_3\ge 0\)).
+\item \emph{Eliminating free variables:} The only free variable is \(x_2\). So
+we change \emph{every} \(x_2\to x_2^{+}-x_2^{-}\) (and add inequality
+constraints \(x_2^{+},x_2^{-}\ge 0\)).
+\end{enumerate}
+The resulting LP problem in standard form (call it (B)) is then:
+\begin{align*}
+\text{max}\quad&-x_1+3x_2^{+}-3x_2^{-} \\
+\text{s.t.}\quad&x_1+x_2^{+}-x_2^{-}-x_3= 3\\
+\quad&3x_1+2x_2^{+}-2x_2^{-}=14 \\
+\quad&x_1,x_2^{+},x_2^{-},x_3\ge 0
+\end{align*}
+While the number of decision variables increases from 2 to 4, we have made the
+LP problem (much) simpler and solvable by efficient algorithms provided by
+computer programs.
+
+Here, let us demonstrate how to show these two LP problems are equivalent, providing some insights on the proof of \Cref{thm:to-std-form-lp}.
+
+First fix any feasible solution \((x_1,x_2)=(a,b)\) to (A). Then, consider the
+solution \((x_1,x_2^{+},x_2^{-},x_3)=(a,b^{+},b^{-},3-a-b^{+}-b^{-})\) (why?).
+It is straightforward to check that this solution is feasible for (B) and has
+the same objective value (because \(b\equiv b^{+}-b^{-}\)).
+
+Now fix any feasible solution \((x_1,x_2^{+},x_2^{-},x_3)=(a,b,c,d)\) to (B).
+Then, consider the solution \((x_1,x_2)=(a,b-c)\) (why?).  Again, it is
+straightforward to check that this solution is feasible for (A) and has the
+same objective value.
+\end{enumerate}
