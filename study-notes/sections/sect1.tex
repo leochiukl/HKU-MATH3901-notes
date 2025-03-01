@@ -52,9 +52,12 @@ bounded below on \(S\), ``\(\inf\)'' would give \(-\infty\) while ``\(\min\)''
 would not exist.
 \end{note}
 \end{itemize}
-The variables \(x_1,\dotsc,x_n\) are called \defn{decision variables}.
-Decision variables that are not involved in any constraints (coming from
-feasible region) are known as \defn{free variables}.
+An optimization problem is said to be \defn{feasible} if the feasible region is
+nonempty. The variables \(x_1,\dotsc,x_n\) are called \defn{decision
+variables}.  Decision variables that are not involved in any constraints
+(coming from feasible region) are known as \defn{free variables}. The primary
+goal is to \emph{solve} optimization problems, i.e., finding optimal solutions
+together with the optimal value (if exists).
 
 All vectors in MATH3901 are assumed to be \emph{column
 vectors}. For convenience in notations, we shall denote the column vector \(\vect{x}=
@@ -268,7 +271,7 @@ We can see that the weaker notion of ``equivalence'' suggested earlier
 equality between optimal values.  This also explains why this weaker notion is
 often already enough for many situations.
 \end{note}
-\item \textbf{Reducing LP problems to standard form.}
+\item\label{it:reduce-to-std-form} \textbf{Reducing LP problems to standard form.}
 \Cref{prp:equiv-optim-same-optim} suggests a handy approach to solve LP problem,
 namely by converting/reducing it to an \emph{equivalent} standard form LP
 problem, and solve the latter problem instead of the original, which can be
@@ -438,10 +441,15 @@ objective function and ``\(\leq\)'' constraint, (A):
 \text{s.t.}\quad&\max_{j=1,\dotsc,m}\vect{a}_j^{T}\vect{x}\le b
 \end{align*}
 where \(\vect{c}_1,\dotsc,\vect{c}_m,\vect{a}_1,\dotsc,\vect{a}_m\in\R^n\) and
-\(b\in\R\), with \(\vect{x}=(x_1,\dotsc,x_n)\). Of course, the problem (A) itself is not a LP problem in general.
-But we claim that the problem (A) is indeed equivalent to the following LP
-problem (B) in the optimal case (i.e., here we are referring to the weaker
-notion of equivalence concerning only optimal solutions):
+\(b\in\R\), with \(\vect{x}=(x_1,\dotsc,x_n)\).
+\begin{note}
+Noting that \(|x|=\max\{x,-x\}\), this form of optimization problems includes
+those ``LP-like'' problems but with absolute value signs.
+\end{note}
+Of course, the problem (A) itself is not a LP problem in general.  But we claim
+that the problem (A) is indeed equivalent to the following LP problem (B) in
+the optimal case (i.e., here we are referring to the weaker notion of
+equivalence concerning only optimal solutions):
 \begin{align*}
 \text{min}\quad&y \\
 \text{s.t.}\quad&y\ge \vect{c}_i^{T}\vect{x}\text{ for all \(i=1,\dotsc,m\)} \\
@@ -611,8 +619,8 @@ Since a polyhedron \(P\) is formed by finitely many ``\(\ge\)'' constraints, we
 can always express it as the \emph{intersection} of finitely many halfspaces:
 \[
 P=\{\vect{x}\in\R^n:A\vect{x}\ge\vect{b}\}
-=\{\vect{x}\in\R^n:\vect{a}_j^{T}\vect{x}\ge\vect{b}\text{ for all \(j=1,\dotsc,m\)}\}
-=\bigcap_{j=1}^{m}\{\vect{x}\in\R^n:\vect{a}_j^{T}\vect{x}\ge\vect{b}\}.
+=\{\vect{x}\in\R^n:\vect{a}_j^{T}\vect{x}\ge b_j\text{ for all \(j=1,\dotsc,m\)}\}
+=\bigcap_{j=1}^{m}\{\vect{x}\in\R^n:\vect{a}_j^{T}\vect{x}\ge b_j\}.
 \]
 For example, the polyhedron in the previous example is the intersection of four
 halfspaces (which four?).
@@ -667,7 +675,7 @@ points in the set:
 \end{tikzpicture}
 \end{center}
 
-Agreeing with our geometrical intuition, a polyhedron is indeed convex.
+\item\label{it:polyhedron-cvx} Agreeing with our geometrical intuition, a polyhedron is indeed convex.
 
 \begin{pf}
 Consider any polyhedron \(P=\{\vect{x}\in\R^n:A\vect{x}\ge b\}\). Fix any
@@ -747,7 +755,7 @@ meant by ``many''? To be more precise, we need to use the concept of
 \end{tikzpicture}
 \end{center}
 
-\item \textbf{Basic (feasible) solutions.} Let \(\vect{x}^*\in\R^n\). Then
+\item\label{it:bfs} \textbf{Basic (feasible) solutions.} Let \(\vect{x}^*\in\R^n\). Then
 \(\vect{x}^*\) is a \defn{basic solution} (of \(P\)) if (i) all equality
 constraints are active at \(\vect{x}^*\), and there are \(n\) \emph{linearly
 independent} constraints active at \(\vect{x}^*\).\footnote{We require linear
@@ -907,14 +915,180 @@ This suggests that it is impossible for \(\vect{y}\) and \(\vect{z}\) to
 satisfy this constraint simultaneously, thus \(\vect{y}\notin P\) or
 \(\vect{z}\notin P\), contradiction.
 \end{pf}
+
+\item \textbf{Specialized characterization of basic solutions for standard form
+polyhedra.} For \emph{standard form} polyhedra
+\(P=\{\vect{x}\in\R^n:A\vect{x}\ge\vect{b},\vect{x}\ge\vect{0}\}\)
+(corresponding to standard form LP problems), we have a specialized
+characterization for basic (feasible) solution, which will be helpful in the
+development of the \emph{simplex method} in \Cref{sect:simplex-method}.
+Recall from \labelcref{it:bfs} that, for a general polyhedron \(P\subseteq
+\R^n\), \(\vect{x}^*\in\R^n\) is called a basic solution of \(P\) if (i) all equality
+constraints are active at \(\vect{x}^*\), and (ii) there are \(n\) \emph{linearly
+independent} constraints active at \(\vect{x}^*\). Here we will derive
+an alternative characterization for a \emph{standard form} polyhedron, and the
+following lemma will be helpful for the proof.
+\begin{lemma}
+\label{lma:n-li-active-iff-unique-sol}
+Let \(\vect{x}^*\in\R^n\) and let \(I=\{i:\vect{a}_i^{T}\vect{x}=b_i\}\) be the
+set of indices of constraints that are active at \(\vect{x}^*\).  Then there
+are \(n\) linearly independent vectors in the set \(\{\vect{a}_i:i\in I\}\) iff
+the system of equations \(\vect{a}_i^{T}\vect{x}=b_i~\forall i\in I\) has a
+unique solution.
+\end{lemma}
+\begin{pf}
+``\(\Rightarrow\)'': Assume there are \(n\) linearly independent vectors in the
+set \(\{\vect{a}_i:i\in I\}\). Then we know that \(\spn{\{\vect{a}_i:i\in
+I\}}=\R^n\). Now assume to the contrary that the system
+\(\vect{a}_i^{T}\vect{x}=b_i~\forall i\in I\) has two distinct solutions
+\(\vect{x}_{1}\) and \(\vect{x}_{2}\). Then for the \emph{nonzero} vector
+\(\vect{d}=\vect{x}_1-\vect{x}_2\), we have \(\vect{a}_i^{T}\vect{d}=0\) for
+all \(i\in I\), contradicting to \(\spn{\{\vect{a}_i:i\in I\}}=\R^n\).
+
+``\(\Leftarrow\)'': Assume the system of equations
+\(\vect{a}_i^{T}\vect{x}=b_i~\forall i\in I\) has a unique solution.  Due to
+the uniqueness, it is not possible to have a nonzero vector \(\vect{d}\) with
+\(\vect{a}_i^{T}\vect{d}=0~\forall i\in I\). Thus, the orthogonal complement is
+\(\{\vect{a}_i:i\in I\}^{\perp}=\spn{\{\vect{a}_i:i\in I\}}^{\perp}=\{\vect{0}\}\),
+which implies that \(\spn{\{\vect{a}_i:i\in I\}}=\R^n\). By the reduction
+approach from linear algebra, we know \(\{\vect{a}_i:i\in I\}\) contains \(n\)
+linearly independent vectors.
+\end{pf}
+\begin{theorem}
+\label{thm:std-form-basic-sol}
+Let \(P=\{\vect{x}\in\R^n:A\vect{x}=\vect{b}, \vect{x}\ge\vect{0}\}\) be a
+standard form polyhedron, where \(A\in\R^{m\times n}\) and \(\vect{b}\in\R^m\).
+Suppose that the \(m\) rows of \(A\) are linearly independent (which implies
+that \(m\le n\)). Then \(\vect{x}=(x_1,\dotsc,x_n)\in\R^n\) is a basic solution
+of \(P\) iff (i) there exist \(m\) linearly independent columns
+\(\vect{A}_{B(1)},\dotsc,\vect{A}_{B(m)}\) of \(A\) such that
+\(\sum_{i=1}^{m}\vect{A}_{B(i)}x_{B(i)}=\vect{b}\), and
+(ii) \(x_{N(1)}=\dotsb=x_{N(n-m)}=0\) where
+\(\{N(1),\dotsc,N(n-m)\}=\{1,\dotsc,n\}\setminus \{B(1),\dotsc,B(m)\}\).
+\end{theorem}
+\begin{pf}
+``\(\Leftarrow\)'': Consider a \(\vect{x}\in\R^n\) and assume that (i) and (ii)
+hold. Then we have
+\(A\vect{x}=\sum_{i=1}^{m}\vect{A}_{B(i)}x_{B(i)}=\vect{b}\), so the equality
+constraints are satisfied. Since the vectors
+\(\vect{A}_{B(1)},\dotsc,\vect{A}_{B(m)}\) are linearly independent, the
+variables \(x_{B(1)},\dotsc,x_{B(m)}\) must be uniquely determined: If we have
+\(\sum_{i=1}^{m}\vect{A}_{B(i)}\widetilde{x}_{B(i)}=\vect{b}\), then
+subtracting this from the equation above gives
+\(\sum_{i=1}^{m}\vect{A}_{B(i)}(x_{B(i)}-\widetilde{x}_{B(i)})=\vect{0}\),
+which implies by the linear independence that \(\widetilde{x}_{B(i)}=x_{B(i)}\)
+for all \(i=1,\dotsc,m\).
+
+Since the other variables are always zero, the system \(A\vect{x}=\vect{b}\)
+has also a unique solution. Thus, by \Cref{lma:n-li-active-iff-unique-sol}, we
+know there are \(n\) linearly independent constraints active at \(\vect{x}\).
+
+``\(\Rightarrow\)'': Assume that \(\vect{x}\in\R^n\) is a basic solution. Let
+\(x_{B(1)},\dotsc,x_{B(k)}\) be the \emph{only} nonzero variables in
+\(\vect{x}\), i.e., they are nonzero and \(x_i=0\) for all
+\(i\notin\{B(1),\dotsc,B(k)\}\). Then all the active equality constraints are
+given by:
+\begin{itemize}
+\item \(\sum_{i=1}^{k}\vect{A}_{B(i)}x_{B(i)}=\vect{b}\),
+\item \(x_i=0\) for all \(i\notin\{B(1),\dotsc,B(k)\}\).
+\end{itemize}
+Since there are \(n\) linearly independent active ones here, we know that the
+system of these equations has a unique solution by
+\Cref{lma:n-li-active-iff-unique-sol}. This implies that
+\(\sum_{i=1}^{k}\vect{A}_{B(i)}x_{B(i)}=\vect{b}\) has a unique solution.
+Then, we know that \(\vect{A}_{B(1)},\dotsc,\vect{A}_{B(k)}\) are linearly
+independent; if not, there would be \(\lambda_1,\dotsc,\lambda_k\) that are not all
+zero such that \(\sum_{i=1}^{k}\vect{A}_{B(i)}\lambda_i=0\), which would then
+yield \(\sum_{i=1}^{k}\vect{A}_{B(i)}(x_{B(i)}+\lambda_i)=\vect{b}\),
+contradicting to the uniqueness of solution.
+
+Since \(A\) has \(m\) linearly independent rows, its maximal number of linearly
+independent columns is also \(m\). Then we deduce that \(k\le m\), and by the
+extension approach from linear algebra, we can find \(m-k\) more columns of
+\(A\): \(\vect{A}_{B(k+1)},\dotsc,\vect{A}_{B(m)}\), such that
+\(\vect{A}_{B(1)},\dotsc,\vect{A}_{B(m)}\) are linearly independent.
+
+Lastly, for every \(i\in\{N(1),\dotsc,N(n-m)\}\), we have
+\(i\notin\{B(1),\dotsc,B(k)\}\) (as \(k\le m\)), thus by construction we must
+have \(x_i=0\). This completes the proof.
+\end{pf}
+
+\begin{remark}
+\item The variables \(x_{B(1)},\dotsc,x_{B(m)}\) are called \defn{basic
+variables}, while the variables \(x_{N(1)}\dotsc,x_{N(n-m)}\) are called
+\defn{non-basic variables}. The collection
+\(\{\vect{A}_{B(1)},\dotsc,\vect{A}_{B(m)}\}\) of \(m\) linearly independent
+columns of \(A\) is called a \defn{basis} of \(A\), and the matrix formed by these
+columns,
+\(B=\begin{bmatrix}\vect{A}_{B(1)}&\cdots&\vect{A}_{B(m)}\end{bmatrix}\in\R^{m\times
+m}\), is called a \defn{basis matrix}.
+
+\item From the proof of ``\(\Rightarrow\)'' direction, we can see that while
+the non-basic variables have to be zero, the basic variables \emph{could} be
+zero as well (those \(x_{B(k+1)},\dotsc,x_{B(m)}=0\)), which would yield
+\emph{more than \(n\)} active constraints at a basic solution \(\vect{x}\),
+since we already have \(n\) active constraints from \(A\vect{x}=\vect{b}\)
+(\(m\) active constraints) and \(x_{N(1)}=\dotsb=x_{N(n-m)}=0\) (\(n-m\) active
+constraints). Such basic solution with more than \(n\) active constraints (or
+equivalently, with some basic variables being \(0\)) is called
+\defn{degenerate}. Geometrically, a degenerate basic solution is at the
+intersection of three of more lines in two dimensions, or at the intersection
+of four or more planes in three dimensions, etc.
+
+It turns out that degeneracy could greatly influence algorithms for LP and
+cause some undesirable behaviours. As such, in most discussions on the
+algorithms for LP later, we will assume that every basic feasible solution is
+\emph{nondegenerate} (so all basic variables \(x_{B(1)},\dotsc,x_{B(m)}\) are
+nonzero).
+
+\item The assumption that the rows of \(A\) are linearly independent is
+actually not that restrictive. In fact, if the rows of
+\(A\) are linearly \emph{dependent} for a LP problem, it indicates that
+(i) some equality constraints are redundant and can be removed to make the rows
+linearly independent without changing the feasible set, or (ii) the feasible set is
+empty (when some contradictory equality constraints are present), which makes
+such LP problem not meaningful. Therefore, such assumption can be made
+throughout the discussion on standard form LP problems without loss of
+generality.
+\end{remark}
+
+\item \label{it:std-form-bfs-procedure} \textbf{Procedure for finding
+basic feasible solutions of standard form polyhedra.} Based on
+\Cref{thm:std-form-basic-sol}, we can obtain the following procedure
+for finding all basic feasible solutions of any standard form polyhedron
+\(P=\{\vect{x}\in\R^n:A\vect{x}=\vect{b},\vect{x}\ge\vect{0}\}\) where
+\(A\in\R^{m\times n}\) and \(\vect{b}\in\R^{m}\), with rows of \(A\) being
+linearly independent (implying that \(m\le n\)):
+\begin{enumerate}[label={(\arabic*)}]
+\item Choose \(m\) linearly independent columns \(\vect{A}_{B(1)},\dotsc,\vect{A}_{B(m)}\) of \(A\).
+\item \emph{(non-basic variables)} Set \(x_i=0\) for all \(i\notin\{B(1),\dotsc,B(m)\}\).
+\item \emph{(basic variables)} Solve the system of \(m\) equations
+\(A\vect{x}=B\vect{x}_{B}=\vect{b}\), where
+\(B:=\begin{bmatrix}\vect{A}_{B(1)}&\cdots&\vect{A}_{B(m)}\end{bmatrix} \) is
+the basis matrix and \(\vect{x}_{B}:=(x_{B(1)},\dotsc,x_{B(m)})\), for the unknowns
+\(x_{B(1)},\dotsc,x_{B(m)}\). \begin{note}
+Since the columns \(\vect{A}_{B(1)},\dotsc,\vect{A}_{B(m)}\) are linearly
+independent, the basis matrix \(B\) must be invertible, thus the system has a
+unique solution.
+\end{note}
+\item \emph{(determining feasibility)} If \(\vect{x}\ge\vect{0}\), then a basic
+feasible solution is obtained. Otherwise, the basic solution obtained is not
+feasible.
+\item Repeat (1)-(4) until all combinations of linearly independent columns of
+\(A\) are considered.
+\end{enumerate}
+From this procedure, since there are at most \(\binom{n}{m}\) combinations of
+linearly independent columns of \(A\), we can deduce that a standard form
+polyhedron can have at most \(\binom{n}{m}\) basic feasible solutions.
+
 \item \textbf{Existence of vertices.} A polyhedron may not have a vertex. For
 example, hyperplanes and halfspaces do not have vertices. In view of this, we
 are interested in investigating \emph{when} a polyhedron would have a vertex.
 
 Intuitively, one may think that a \emph{bounded} polyhedron always have a
 vertex. This is indeed true, but the boundedness is not a necessary condition
-for the existence of vertex. For example, the picture illustrates an unbounded
-polyhedron with a vertex.
+for the existence of vertex. For example, the following picture illustrates an
+unbounded polyhedron with a vertex.
 \begin{center}
 \begin{tikzpicture}
 \draw[red] (0,0) -- (1,3);
@@ -999,15 +1173,16 @@ Now, we will show that it is possible to ``touch'' one more ``edge'' by
 choosing an appropriate parameter \(\lambda\). By assumption, this line must
 not be contained by \(P\), so as we vary the parameter \(\lambda\), some
 constraints will eventually be violated. Then consider the moment at which some
-constraints are about to be violated (for the first time); in such case, there is
-at least one new constraint becoming active.\footnote{More formally, this can
-be justified by the intermediate value theorem.} Denoting the parameter in such
-case by \(\lambda^*\), we then have
-\(\vect{a}_j^{T}(\vect{x}+\lambda^{*}\vect{d})=b_j\) for some \(j\notin I\). By
-construction, no constraints are actually violated at the point
-\(\vect{x}+\lambda^{*}\vect{d}\) (we just have that some constraints are
-\emph{about} to be violated), so \(\vect{x}+\lambda^{*}\vect{d}\) is feasible
-and belongs to \(P\) still.
+constraints are about to be violated (for the first time); in such case, there
+is at least one new constraint becoming active.\footnote{More formally, this
+can be justified by the intermediate value theorem.} Denoting the parameter in
+such case by \(\lambda^*\), we then have
+\(\vect{a}_j^{T}(\vect{x}+\lambda^{*}\vect{d})=b_j\) for some \(j\notin I\) (we
+have \(j\notin I\) as the constraints corresponding to indices in \(I\) would
+still be active, thus not be violated for all \(\lambda\)). By construction, no
+constraints are actually violated at the point \(\vect{x}+\lambda^{*}\vect{d}\)
+(we just have that some constraints are \emph{about} to be violated), so
+\(\vect{x}+\lambda^{*}\vect{d}\) is feasible and belongs to \(P\) still.
 
 \textbf{Showing the linear independence of constraints with the additional one.}
 To prove that \(\{\vect{a}_i:i\in I\}\cup\{\vect{a}_j\}\) is linearly
@@ -1110,7 +1285,7 @@ is a nonzero vector \(\vect{d}\) such that \(\vect{a}_i^{T}\vect{d}=0\) for all
 \(\vect{c}^{T}\vect{d}\le 0\). Now consider two cases:
 \begin{itemize}
 \item \emph{Case 1: \(\vect{c}^{T}\vect{d}<0\).} Consider the \emph{half-line}
-\(\vect{x}+\lambda\vect{d}\) where \(\lambda\gc{>0}\) is the parameter.  Like
+\(\vect{x}+\lambda\vect{d}\) where \(\lambda\gc{\ge 0}\) is the parameter.  Like
 the proof for ``\(\Leftarrow\)'' direction of \Cref{thm:vertex-exist-noline},
 all the active constraints at \(\vect{x}\) are still active at every point on
 this half-line, i.e., \(\vect{a}_i^{T}(\vect{x}+\lambda\vect{d})=0\) for all
@@ -1126,7 +1301,7 @@ assumption that \(\vect{c}^{T}\vect{d}<0\). Therefore, the optimal value would
 be \(-\infty\) in such case, which is impossible by our assumption at the beginning.
 \end{pf}
 
-This means that as we increase the parameter \(\lambda>0\) for this half-line,
+This means that as we increase the parameter \(\lambda\ge 0\) for this half-line,
 some constraints will eventually be violated. Like before, denoting by
 \(\lambda^*\) the parameter for the moment at which some constraints are \emph{about}
 to be violated (for the first time), we have
@@ -1217,11 +1392,11 @@ one vertex (by \Cref{cor:std-form-has-vertex}), and then applying
 \end{pf}
 
 \begin{note}
-Generally, for a optimization problem of minimization, it is possible that the
-optimal value is not \(-\infty\), and also optimal solution does not exist. For
+Generally, for an optimization problem of minimization, it is possible that the
+optimal value is not \(-\infty\), and there is also no optimal solution. For
 instance, consider the optimization problem of minimizing \(1/x\) subject to
-\(x\ge 1\). The optimal value is not \(-\infty\) as the objective function is
-bounded below on the feasible region (e.g., bounded below by \(0\)), but there
-is no optimal solution since \(1/x\) can get arbitrarily close to \(0\).
+\(x\ge 1\). The optimal value is \(\inf\{1/x:x\ge 1\}=0\), but there is no
+optimal solution since \(1/x>0\) for all \(x\ge 1\).
 \end{note}
 \end{enumerate}
+
