@@ -5,6 +5,7 @@
 \usepackage{diagbox}
 \usepackage{makecell}
 \usepackage{bm}
+\usepackage{multirow}
 \usepackage{mleftright}
 \usepackage{derivative}
 \usepackage{cancel}
@@ -36,10 +37,20 @@
 \usetikzlibrary{external}
 \usepgfplotslibrary{fillbetween}
 
-\pgfplotsset{compat=1.18}
-
 \setenumerate[1]{label=\thesubsection.\arabic*~, ref=[\thesubsection.\arabic*]}
 \mleftright
+
+%Proper spacing when coloring math symbols
+%https://tex.stackexchange.com/questions/21598/how-to-color-math-symbols
+\makeatletter
+\def\mcolor#1#{\@mcolor{#1}}
+\def\@mcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
 
 \newcommand*{\prob}[1]{\mathbb{P}\left(#1\right)}
 \newcommand*{\expv}[1]{\mathbb{E}\left[#1\right]}
@@ -64,18 +75,18 @@
 \newcommand*{\defn}[1]{\index[def]{#1}\textcolor{ForestGreen}{\textbf{#1}}}
 \newcommand*{\bu}[1]{\textbf{\underline{#1}}}
 \newcommand*{\cmark}{\gc{\faIcon{check}}}
+\newcommand*{\xmark}{\rc{\faIcon{times}}}
 \newcommand*{\ystar}{\textcolor{yellow}{\faIcon{star}}}
 \newcommand*{\warn}{\textcolor{red}{\faIcon{exclamation-triangle}}}
 
-\newcommand*{\vc}[1]{{\color{violet}#1}}
-\newcommand*{\mgc}[1]{{\color{magenta}#1}}
-\newcommand*{\gc}[1]{{\color{ForestGreen}#1}}
-\newcommand*{\blc}[1]{{\color{blue}#1}}
-\newcommand*{\brc}[1]{{\color{brown!70!black}#1}}
-\newcommand*{\orc}[1]{{\color{orange}#1}}
-\newcommand*{\rc}[1]{{\color{red}#1}}
-\newcommand*{\tec}[1]{{\color{teal}#1}}
-
+\newcommand*{\vc}[1]{\mcolor{violet}{#1}}
+\newcommand*{\mgc}[1]{\mcolor{magenta}{#1}}
+\newcommand*{\gc}[1]{\mcolor{ForestGreen}{#1}}
+\newcommand*{\blc}[1]{\mcolor{blue}{#1}}
+\newcommand*{\brc}[1]{\mcolor{brown!70!black}{#1}}
+\newcommand*{\orc}[1]{\mcolor{orange!85!black}{#1}}
+\newcommand*{\rc}[1]{\mcolor{red}{#1}}
+\newcommand*{\tec}[1]{\mcolor{teal}{#1}}
 
 \newenvironment{remark}{\sffamily \underline{Remarks}:\begin{itemize}}{\end{itemize}}
 \newenvironment{note}{\sffamily\lbrack Note:}{\!\!\rbrack}

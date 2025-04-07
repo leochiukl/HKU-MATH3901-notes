@@ -1,0 +1,445 @@
+\section{Sensitivity Analysis}
+\label{sect:sens-analysis}
+\begin{enumerate}
+\item \textbf{Why sensitivity analysis?} Consider a standard form LP problem:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+Previously, we have focused on developing methods for solving it and obtaining
+optimal solutions, with the parameters \(A\), \(\vect{b}\), and \(\vect{c}\)
+being fixed. However, in practice, there are often changes to \(A\),
+\(\vect{b}\), and \(\vect{c}\) from the updated information (e.g., some raw
+materials \faIcon{cheese} become more expensive and some goods \faIcon{hamburger}
+can be sold at higher prices), which makes the previously obtained optimal
+solution not necessarily optimal for the new LP problem anymore.
+
+While one can certainly solve the new LP problem from scratch again to get a
+new optimal solution, this approach may not be efficient and acceptable (e.g.,
+it would not be acceptable if it takes \underline{a day} to solve for the new optimal
+solution from scratch, while updates occur \underline{daily}). Therefore, in
+\Cref{sect:sens-analysis}, we will develop some ways to \emph{efficiently}
+analyze/estimate the impacts from changing the LP problems in certain aspects,
+without solving the new LP problem from scratch. This is known as
+\emph{sensitivity analysis}.
+
+For mathematical tractability, throughout we shall focus on standard form LP
+problems, with the usual assumption that the rows of \(A\) are linearly
+independent.
+\end{enumerate}
+\subsection{Local Sensitivity Analysis}
+\label{subsect:local-sens-analysis}
+\begin{enumerate}
+\item \textbf{Basic idea.} The first type of sensitivity analysis to be
+discussed is \emph{local sensitivity analysis}. As suggested by the term
+``local'', it refers to the case where the changes are ``small''. The intuitive
+idea of local sensitivity analysis is that the previous obtained optimal
+solution should remain optimal after ``sufficiently small'' changes.
+
+Consider a standard form LP:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+Suppose that we have obtained an optimal solution \(\vect{x}^*\) to this LP
+with an optimal basis matrix \(B\). By the definition
+of optimal basis matrix, we have:
+\begin{itemize}
+\item \emph{(feasibility)} \(B^{-1}\vect{b}\ge\vect{0}\), and \item
+\emph{(optimality)}
+\(\bar{\vect{c}}^{T}=\vect{c}^{T}-\vect{c}_{B}^{T}B^{-1}A\ge\vect{0}\)
+(\(\vect{0}\) is a row vector), or
+\(\bar{\vect{c}}=\vect{c}-A^{T}(B^{-1})^{T}\vect{c}_{B}\ge\vect{0}\)
+(\(\vect{0}\) is a column vector) after taking transpose.
+\end{itemize}
+After having some changes, we investigate whether these two conditions are
+affected. If both of them remain to hold, then the original basis matrix \(B\)
+would remain optimal, preserving the optimality.  Based on this investigation,
+we can then deduce how ``small'' the changes should be to ensure the
+preservation of optimality. To illustrate how this approach works, we will go
+through several case studies on the possible changes to the LP problem in the
+following.
+
+\item \textbf{Case Study 1: Changes in the vector \(\vect{c}\).} Here we
+consider the special case where we change \(c_j\to c_j+\delta\) for a certain
+\(j=1,\dotsc,n\) only. Because there is no change on \(A\) and \(\vect{b}\),
+the feasibility condition \(B^{-1}\vect{b}\ge\vect{0}\) always remains valid.
+So, for the basis matrix \(B\) to remain optimal, we just need
+\(\bar{\vect{c}}'=\vect{c}'-A^{T}(B^{-1})^{T}\vect{c}_{B}'\ge\vect{0}\). The situation
+can be divided into two cases, and we will analyze (i) the condition for
+preserving optimality and (ii) change in optimal value (assuming the condition
+for preserving optimality is satisfied):
+\begin{itemize}
+\item \emph{Case 1: \(x_i\) is a nonbasic variable.} In this case, changing
+\(c_j\to c_j+\delta\) would not affect \(\vect{c}_{B}\), so
+\(\vect{c}_{B}'=\vect{c}_{B}\). Hence, \(\bar{c}_i'\ge 0\) for every \(j\ne i\).
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Condition for preserving optimality:} To ensure that
+\(\bar{c}_i'\ge 0\) also, we would need 
+\[
+\bar{c}_i'\ge 0
+\iff \underbrace{c_i-\vect{A}_i^{T}(B^{-1})^{T}\vect{c}_{B}}_{\bar{c}_i}+\delta\ge 0
+\iff \boxed{\delta\ge -\bar{c}_i}.
+\]
+\item \emph{Change in optimal value:} Since we can write
+\(\vect{c}^{T}\vect{x}=\vect{c}_{B}^{T}\vect{x}_{B}\) and \(\vect{c}_{B}\) is
+not affected by the change, the change in optimal value is \(\boxed{0}\).
+\end{enumerate}
+\item \emph{Case 2: \(x_i\) is a basic variable.} This case is more complicated
+as changing \(c_i\to c_i+\delta\) would affect \(\vect{c}_{B}\). Writing
+\(j=B(\ell)\) for some \(\ell\), the change \(c_i\to c_i+\delta\) would lead to
+the following change: \(\vect{c}_{B}\to\vect{c}_{B}+\delta\vect{e}_{\ell}\).
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{Condition for preserving optimality:} Since \(x_i\) is a basic
+variable, its reduced cost is always zero by \labelcref{it:reduced-cost}.
+Next, for every \(j\ne i\), we can write
+\begin{align*}
+\bar{c}_j'&=\underbrace{c_j'}_{c_j}-\vect{A}_j^{T}(B^{-1})^{T}
+\underbrace{\vect{c}_{B}'}_{\vect{c}_{B}+\delta\vect{e}_{\ell}} \\
+&=\orc{c_j-\vect{A}_j^{T}(B^{-1})^{T}\vect{c}_{B}}-\delta\vc{\vect{A}_j^{T}(B^{-1})^{T}\vect{e}_{\ell}} \\
+&=\orc{\bar{c}_j}-\delta\vc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j},
+\end{align*}
+so \(\bar{c}_j'\ge 0\iff \boxed{\bar{c}_j\ge \delta\mgc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j}}\),
+where \(\mgc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j}\) is the \(\ell\)th entry of
+\(B^{-1}\vect{A}_j\), i.e., the intersection of the \(j\)th column and
+\(\ell\)th row in the tableau from the simplex method:
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+\(-\vect{c}_{B}^{T}\vect{x}_{B}\)&\(\cdots\)&\(\bar{c}_{\ell}\)&\(\cdots\) \\
+\midrule
+\(\vdots\)&\(\vert\)&&\(\vert\) \\
+\(x_{B(\ell)}\)&\(\cdots\)&\mgc{\(\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j\)}&\(\cdots\) \\
+\(\vdots\)&\(\vert\)&&\(\vert\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\item \emph{Change in optimal value:} Since we have the following change:
+\(\vect{c}\to\vect{c}+\delta\vect{e}_{i}\), the change in optimal value is
+\(\boxed{\delta x_i}\).
+\end{enumerate}
+\end{itemize}
+
+\item \textbf{Case Study 2: Addition of a new variable.} With a new variable
+\(x_{n+1}\) added, the standard form LP problem becomes
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x}+c_{n+1}x_{n+1} \\
+\text{s.t.}\quad&A\vect{x}+\vect{A}_{n+1}x_{n+1}=\vect{b} \\
+&\vect{x}\ge \vect{0}, x_{n+1}\ge 0
+\end{align*}
+Note that \((\vect{x},x_{n+1})=(\vect{x}^*,0)\) is a basic feasible solution to
+the new LP problem with basis matrix \(B\), where \(x_{n+1}\) is a
+nonbasic variable. Hence, if the basis matrix \(B\) remains optimal here, then
+\((\vect{x},x_{n+1})=(\vect{x}^*,0)\) is an optimal solution to this new LP problem.
+
+Since there are no changes to \(c_1,\dotsc,c_n\) and \(B\), we must have
+\(B^{-1}\vect{b}\ge\vect{0}\) and
+\(\bar{\vect{c}}=\vect{c}-A^{T}(B^{-1})^{T}\vect{c}_{B}\ge\vect{0}\). So we
+only need to ensure that
+\(\boxed{\bar{c}_{n+1}=c_{n+1}-\vect{c}_{B}^{T}B^{-1}\vect{A}_{n+1}^{T}\ge
+0}\). When this condition is met, \((\vect{x},x_{n+1})=\boxed{(\vect{x}^*,0)}\) is
+optimal, and the change in optimal value is \(\boxed{0}\) since we have
+\(c_{n+1}x_{n+1}=0\) here.
+\end{enumerate}
+\subsection{Global Dependence on the Vectors \texorpdfstring{\(\vect{b}\) and \(\vect{c}\)}{b and c}}
+\label{subsect:global-dep-bc}
+\begin{enumerate}
+\item After studying \emph{local} sensitivity analysis in
+\Cref{subsect:local-sens-analysis}, we will analyze the dependence of the
+optimal value on the vectors \(\vect{b}\) and \(\vect{c}\) from a \emph{global
+perspective}.  First we discuss the global dependence on the vector \(\vect{b}\).
+\item \textbf{Setup.} To emphasize the dependence of the LP problem on the
+vector \(\vect{b}\), we use the notation
+\(P(\vect{b}):=\{\vect{x}\in\R^n:A\vect{x}=\vect{b},\vect{x}\ge\vect{0}\}\) to
+denote the feasible set of the LP problem given the vector \(\vect{b}\).
+Now, let \(S:=\{\vect{b}:P(\vect{b})\text{ is nonempty}\}=\{\vect{A}\vect{x}:\vect{x}\ge\vect{0}\}\).
+
+Then, for every \(\vect{b}\in S\), we define \(F(\vect{b}):=\min_{x\in
+P(\vect{b})}\vect{c}^{T}\vect{x}\), which gives the optimal value of the LP
+problem, as a function of \(\vect{b}\). By construction of \(S\), we know
+\(F(\vect{b})<\infty\) always. To study the dependence of the LP problem on the
+vector \(\vect{b}\), this function \(F\) on \(S\) is our main focus.
+
+Throughout, we shall assume that the dual LP problem is feasible, i.e.,
+\(P^{*}(\vect{c}):=\{\vect{y}\in\R^m:A^{T}\vect{y}\le \vect{c}\}\ne\varnothing\). In this case,
+by the weak duality we know that the primal optimal value must be greater than
+\(-\infty\), meaning that \(F(\vect{b})\) has to be finite for every
+\(\vect{b}\in S\).
+\item \textbf{Local analysis on the function \(F\).} Before studying the
+function \(F\) globally, we first use the technique of local sensitivity
+analysis from \Cref{subsect:local-sens-analysis} to understand better the
+properties of \(F\).
+
+First fix any \(\vect{b}^{*}\in S\). With the vector \(\vect{b}=\vect{b}^{*}\),
+suppose there is a nondegenerate primal optimal basic feasible solution, having
+the optimal basis matrix \(B\). Then, the vector of basic variables is given by
+\(\vect{x}_{B}=B^{-1}\vect{b}^{*}>\vect{0}\), where the positivity follows from
+the degeneracy. By \Cref{prp:bfs-optim-nonneg-redu-cost}, the reduced costs
+satisfy \(\bar{\vect{c}}\ge\vect{0}\).
+
+Now, suppose that we change \(\vect{b}^{*}\to \vect{b}\). As long as the
+difference \(\vect{b}-\vect{b}^{*}\) is sufficiently small, \(B^{-1}\vect{b}\)
+would remain componentwise positive, establishing the \emph{feasibility}. Also, this
+change would not affect \(\bar{\vect{c}}\), so it remains nonnegative
+componentwise, establishing the \emph{optimality}. This means that, provided
+that the change is sufficiently small, \(B\) would remain as an optimal basis.
+Therefore, we have \(F(\vect{b})=\vect{c}_{B}^{T}\vect{x}_{B}=
+\vect{c}_{B}^{T}B^{-1}\vect{b}\), for all \(\vect{b}\) ``near'' \(\vect{b}^{*}\).
+
+Geometrically, this suggests that \(F\) is indeed a piecewise linear function
+of \(\vect{b}\). To see this, note that
+\(\pdv{F}{\vect{b}}=(B^{-1})^{T}\vect{c}_{B}\) (by matrix calculus). So for all
+\(\vect{b}\) ``around'' \(\vect{b}^{*}\), \(F\) takes a constant ``slope'' as a
+function of \(\vect{b}\).  Of course, if \(\vect{b}\) is sufficiently far from
+\(\vect{b}^{*}\), the optimal basis matrix may change and so does
+\(\pdv{F}{\vect{b}}\), but \(F\) still takes a constant ``slope''. This shows
+the piecewise linearity of \(F\) (under the assumption of the existence of such
+nondegenerate primal optimal basic feasible solution always).
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[domain=-1:6, axis lines=middle, xtick={0.5,1,3.5}, xticklabels={\(\vect{b}_1\), \(\vect{b}_2\), \(\vect{b}_3\)}, ytick=\empty, xmax=6.5, ymin=-1, ymax=10, xlabel=\(\vect{b}\), ylabel={\(F(\vect{b})\)}]
+\addplot[blue, domain=-1:1]{1-x};
+\addplot[blue, domain=1:2]{0.5*x-0.5};
+\addplot[blue, domain=2:6]{1.5*x-2.5};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+In this picture, \(\vect{b}_1\) and \(\vect{b}_3\) yield nondegenerate primal
+optimal basic feasible solutions (they are candidates for ``\(\vect{b}^{*}\)''
+here), while \(\vect{b}_2\) cannot serve as a candidate for
+``\(\vect{b}^{*}\)'' here, since \(F\) is not linear ``around'' \(\vect{b}_2\);
+this suggests that \(\vect{b}_2\) indeed yields a \emph{degenerate} primal
+optimal basic feasible solution (knowing that every vector \(\vect{b}\) must yield
+a primal optimal basic feasible solution, under the dual feasibility).
+
+\item \textbf{Convexity of \(F\).} Now we start studying \(F\) globally. The
+main property of \(F\) to be discussed here is its \emph{convexity} as a
+function of \(\vect{b}\):
+
+\begin{theorem}
+\label{thm:F-cvx}
+The function \(F\) is a convex function of \(\vect{b}\) on the set \(S\).
+\end{theorem}
+We shall offer two proofs here: one is based on the definition; another is
+based on the duality theory.
+
+\begin{pf}
+\emph{(by definition)}
+Fix any \(\vect{b}_1,\vect{b}_2\in S\) and any \(\lambda\in[0,1]\). Since the
+optimal value of the standard form LP problem here is finite, it is always
+achieved at some point in the feasible region. Hence, we have
+\(F(\vect{b}_1)=\vect{c}^{T}\vect{x}_1\) and
+\(F(\vect{b}_2)=\vect{c}^{T}\vect{x}_2\) for some \(\vect{x}_1\in
+P(\vect{b}_1)\) and \(\vect{x}_2\in P(\vect{b}_2)\).
+
+We claim that \(\vc{\lambda\vect{x}_1+(1-\lambda)\vect{x}_2}\in
+P(\orc{\lambda\vect{b}_1+(1-\lambda)\vect{b}_2})\). To see this, consider:
+\begin{itemize}
+\item \(A(\vc{\lambda\vect{x}_1+(1-\lambda)\vect{x}_2})
+=\lambda A\vect{x}_1+(1-\lambda)A\vect{x}_2
+\overset{(\vect{x}_1\in P(\vect{b}_1), \vect{x}_2\in P(\vect{b}_2))}{=}\orc{\lambda\vect{b}_1+(1-\lambda)\vect{b}_2}\).
+\item From \(\vect{x}_1,\vect{x}_2\ge \vect{0}\), we have \(\lambda\vect{x}_1+(1-\lambda)\vect{x}_2\ge\vect{0}\).
+\end{itemize}
+Therefore, we have
+\begin{align*}
+F(\orc{\lambda\vect{b}_1+(1-\lambda)\vect{b}_2})
+&=\min_{\vect{x}\in P(\orc{\lambda\vect{b}_1+(1-\lambda)\vect{b}_2})}\vect{c}^{T}\vect{x} \\
+&\le\vect{c}^{T}(\vc{\lambda\vect{x}_1+(1-\lambda)\vect{x}_2}) \\
+&=\lambda\vect{c}^{T}\vect{x}_1+(1-\lambda)\vect{c}^{T}\vect{x}_2 \\
+&=\lambda F(\vect{b}_{1})+(1-\lambda)F(\vect{b}_{2}),
+\end{align*}
+establishing the convexity.
+\end{pf}
+
+\begin{pf}
+\emph{(by duality theory)}
+By strong duality, we know \(F(\vect{b})=\min_{\vect{x}\in P(\vect{b})}\vect{c}^{T}\vect{x}
+=\max_{\vect{y}\in P^*(\vect{c})}\vect{b}^{T}\vect{y}\), which is finite.
+
+\textbf{Claim:} The dual feasible region
+\(P^*(\vect{c})=\{\vect{y}\in\R^m:A^{T}\vect{y}\le\vect{c}\}\) has a vertex.
+
+\begin{pf}
+Since \(P(\vect{b})\) is a nonempty standard form polyhedron and the optimal
+value is finite, applying the simplex method on the primal problem would yield
+an optimal basic feasible solution \(\vect{x}\) with an optimal basis matrix
+\(B\) at the termination. Then, as in \Cref{lma:optim-prim-feas-dual-feas}
+we can construct a basic solution \(\vect{y}=(B^{-1})^{T}\vect{c}_{B}\) to the
+dual problem. Since the reduced costs must be all nonnegative at the
+termination of the simplex method, such basic solution \(\vect{y}\) is also
+feasible for the dual problem. Hence it is a basic feasible solution, or
+vertex, of \(P^{*}(\vect{c})\).
+\end{pf}
+
+Let \(\vect{y}_{1},\dotsc,\vect{y}_{N}\) be the vertices of \(P^*(\vect{c})\).
+By \Cref{thm:vertex-optimal}, the finite optimal value must be achieved at a
+vertex \(\vect{y}_{i}\). So we can write
+\(F(\vect{b})=\max_{i=1,\dotsc,N}\vect{b}^{T}\vect{y}_i\). As
+\(\vect{b}^{T}\vect{y}_i\) is linear and hence convex in \(\vect{b}\) for every
+\(i=1,\dotsc,N\), we conclude by \Cref{prp:max-cvx-cvx} that \(F\) is convex in
+\(\vect{b}\).
+\end{pf}
+\item\label{it:global-dep-c-g-piecewise-lin-concave} \textbf{Global dependence
+on the vector \(\vect{c}\).} So far we have been analyzing the global
+dependence of the vector \(\vect{b}\). Next, we will consider the global
+dependence on the vector \(\vect{c}\) instead. Likewise, we let
+\(T:=\{\vect{c}:P^*(\vect{c})\text{ is nonempty}\}\) and define a function
+\(G\) on \(T\) by \(G(\vect{c}):=\min_{\vect{x}\in
+P(\vect{b})}\vect{c}^{T}\vect{x} =\max_{\vect{y}\in
+P^*(\vect{c})}\vect{b}^{T}\vect{y}\) for every \(\vect{c}\in T\), which always
+takes finite values.
+
+Let \(\vect{x}_1,\dotsc,\vect{x}_N\) be the vertices of the primal feasible
+region
+\(P(\vect{b})=\{\vect{x}\in\R^n:A\vect{x}=\vect{b},\vect{x}\ge\vect{0}\}\).
+Then, using similar argument as before, we can write
+\(G(\vect{c})=\min_{i=1,\dotsc,N}\vect{c}^{T}\vect{x}_i\), which is piecewise
+linear \underline{concave}. (A function \(f:\R^n\to\R\) is \defn{concave} if
+for all \(\vect{x},\vect{y}\in\R^n\) and all \(\lambda\in[0,1]\), we have
+\(f(\lambda\vect{x}+(1-\lambda)\vect{y})\ge\lambda
+f(\vect{x})+(1-\lambda)f(\vect{y})\). Note that the negative of a concave
+function is convex.)
+
+So, in some sense, the dependency of the optimal value on \(\vect{c}\)
+(described by the function \(G\)) is somewhat ``opposite'' to that on
+\(\vect{b}\) (described by the function \(F\)).
+\end{enumerate}
+\subsection{Parametric Programming}
+\label{subsect:para-programming}
+\begin{enumerate}
+\item For the functions \(F(\vect{b})\) and \(G(\vect{c})\) introduced in
+\Cref{subsect:global-dep-bc}, generally we can only have some \emph{bounds} on
+their values:
+\begin{itemize}
+\item \emph{(lower bound)} \(F(\vect{b})\ge \vect{b}^{T}\vect{y}_i\) where
+\(\vect{y}_i\) is any vertex of the dual feasible region \(P^*(\vect{c})\).
+\item \emph{(upper bound)} \(G(\vect{c})\le \vect{c}^{T}\vect{x}_i\) where
+\(\vect{x}_i\) is any vertex of the primal feasible region \(P(\vect{b})\).
+\end{itemize}
+In \Cref{subsect:para-programming}, we will study a special case where the
+\emph{exact} optimal value can be efficiently determined as a function of a
+\underline{parameter} \(\theta\) that drives the change on the vector
+\(\vect{c}\) (hence the name \underline{parametric} programming).
+
+\item \textbf{Setup.} Again, we start by defining a function \(g\) by
+\(g(\theta):=\min_{\vect{x}\in
+P(\vect{b})}(\vect{c}+\theta\vect{d})^{T}\vect{x}\) for all \(\theta\in\R\).
+The function \(g\) represents the optimal value when the vector \(\vect{c}\) is
+changed in a specific way, namely along a fixed direction \(\vect{d}\).  Here,
+we shall assume that the primal feasible set \(P(\vect{b})\) is nonempty. Then,
+we know \(g<\infty\), but it is still generally possible that
+\(g(\theta)=-\infty\) for some \(\theta\in\R\).
+
+\item \label{it:para-g-piecewise-affine-concave} \textbf{Piecewise affinity and
+concavity of function \(g\).} For every \(\theta\in\R\) where \(g(\theta)\) is
+finite (not \(-\infty\)), like before we can write
+\(g(\theta)=\min_{i=1,\dotsc,N}(\vect{c}+\theta\vect{d})^{T}\vect{x}_i\) where
+\(\vect{x}_1,\dotsc,\vect{x}_N\) are the vertices of the primal feasible region
+\(P(\vect{b})\). From this, we can see that \(g\) is piecewise affine and
+concave.
+\item \label{it:cpt-g-proc} \textbf{Computing \(g(\theta)\) by the simplex
+method.} As mentioned earlier, the primary purpose of the function \(g\) is to
+allow us to efficiently compute the optimal value in respond to the change on
+the vector \(\vect{c}\) along the direction \(\vect{d}\). One way for
+performing such computation is through the (primal) simplex method, whose procedure is
+described as follows:
+\begin{enumerate}[label={(\arabic*)}]
+\item Start with the tableau associated with a basic feasible solution
+\(\vect{x}\) and the corresponding basis matrix \(B\); here due to the presence
+of ``\(\theta\)'' in the coefficients for the objective function, the
+\emph{reduced cost} row of the tableau (zeroth row) would contain some
+\(\theta\)'s that are yet to be determined.
+
+\emph{Example:}
+\begin{center}
+\begin{tabular}{c}
+\vspace{0.7cm} \\
+\(x_{4}=\) \\
+\(x_5=\) \\
+\end{tabular}
+\begin{tabular}{cccccc}
+&\(x_1\)&\(x_2\)&\(x_3\)&\(x_4\)&\(x_5\) \\
+\toprule
+\(0\)&\(-3+2\theta\)&\(3-\theta\)&\(1\)&\(0\)&0\\
+\midrule
+\(5\)&\(1\)&\(2\)&\(-3\)&\(1\)&\(0\) \\
+\(7\)&\(2\)&\(1\)&\(-4\)&\(0\)&\(1\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\item Determine the bounds on \(\theta\) such that all the reduced costs are
+nonnegative (so the current basic feasible solution is optimal), say \(\ell\le
+\theta\le u\). Then, for every \(\theta\in [\ell,u]\), the value of
+\(g(\theta)\) is given by the negative of the top-left corner in the tableau.
+
+\emph{Example:} In the tableau above, all reduced costs are nonnegative iff
+\(-3+2\theta\ge 0\) and \(3-\theta\ge 0\), i.e., \(3/2\le\theta\le 3\). Hence,
+\(g(\theta)=0\) for every \(\theta\in[3/2,3]\).
+\item Consider the case where \(\theta\) falls outside the bounds (slightly):
+\begin{itemize}
+\item \emph{Case 1: \(\theta>u\) (slightly).} Choose a column with negative
+reduced cost to be the pivot column (e.g., by Bland's pivoting rule).  If no
+entry of \(\vect{u}\) (the pivot column except the reduced cost entry) is
+positive, then we have \(g(\theta)=-\infty\) for every \(\theta>u\).
+
+If some entry of \(\vect{u}\) is positive, choose the pivot row as usual,
+i.e., to be the one with the smallest ratio \(x_{B(i)}/u_i\) over all \(i\)
+with \(u_i>0\). Then, perform the usual EROs on the tableau to change the basis.
+
+
+\emph{Example:} In the case here, suppose \(\theta>3\) slightly. Then we would choose
+the second column to be the pivot column and the first row to be the pivot row:
+\begin{center}
+\begin{tabular}{c}
+\vspace{0.7cm} \\
+\(x_{4}=\) \\
+\(x_5=\) \\
+\end{tabular}
+\begin{tabular}{cccccc}
+&\(x_1\)&\(x_2\)&\(x_3\)&\(x_4\)&\(x_5\) \\
+\toprule
+\(\)&\(-3+2\theta\)&\mgc{\(3-\theta\)}&\(1\)&\(0\)&\(0\)\\
+\midrule
+\mgc{\(5\)}&\mgc{\(1\)}&\mgc{\(\boxed{2}\)}&\mgc{\(-3\)}&\mgc{\(1\)}&\mgc{\(0\)} \\
+\(7\)&\(2\)&\mgc{\(1\)}&\(-4\)&\(0\)&\(1\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+After performing the usual EROs (it is a bit tricker here due to the presence
+of \(\theta\)), we get
+\begin{center}
+\begin{tabular}{c}
+\vspace{0.7cm} \\
+\(x_{4}=\) \\
+\(x_5=\) \\
+\end{tabular}
+\begin{tabular}{cccccc}
+&\(x_1\)&\(x_2\)&\(x_3\)&\(x_4\)&\(x_5\) \\
+\toprule
+\(-7.5+2.5\theta\)&\(-4.5+2.5\theta\)&\(0\)&\(5.5-1.5\theta\)&\(-1.5+0.5\theta\)&\(0\)\\
+\midrule
+\(2.5\)&\(0.5\)&\(1\)&\(-1.5\)&\(0.5\)&\(0\) \\
+\(4.5\)&\(1.5\)&\(0\)&\(-2.5\)&\(-0.5\)&\(1\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\item \emph{Case 2: \(\theta<\ell\) (slightly).} Choose a column with negative
+reduced cost to be the pivot column (e.g., by Bland's pivoting rule).  If no
+entry of \(\vect{u}\) is positive, then we have \(g(\theta)=-\infty\) for every
+\(\theta<\ell\).
+
+If some entry of \(\vect{u}\) is positive, choose the pivot row as usual, and
+then perform the usual EROs on the tableau to change the basis.
+\end{itemize}
+\item For each resulting tableau, go back to step 2 to determine the bounds on
+\(\theta\) and the corresponding value of \(g(\theta)\), and then proceed to
+step 3 again...
+
+\emph{Example:} For the tableau obtained from the case with \(\theta>3\)
+slightly, the reduced costs are all nonnegative iff \(3\le \theta\le 5.5/1.5\).
+So we have \(g(\theta)=-(-7.5+2.5\theta)=7.5-2.5\theta\) for every \(\theta\in[3,5.5/1.5]\).
+\end{enumerate}
+\end{enumerate}

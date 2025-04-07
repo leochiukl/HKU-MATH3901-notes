@@ -47,9 +47,10 @@ value} (always unique, if exists), and \emph{every}
 \defn{optimal solution} (not unique in general!).
 \begin{note}
 We use \(\inf/\sup\) rather than \(\min/\max\) in the definition of optimal
-value to allow for more flexibility, e.g., if the objective function is not
-bounded below on \(S\), ``\(\inf\)'' would give \(-\infty\) while ``\(\min\)''
-would not exist.
+value to allow for more flexibility, e.g., for a minimization problem, if the
+objective function is not bounded below on \(S\), ``\(\inf\)'' would give
+\(-\infty\) while ``\(\min\)'' would not exist; in such case, no optimal
+solution exists.
 \end{note}
 \end{itemize}
 An optimization problem is said to be \defn{feasible} if the feasible region is
@@ -59,10 +60,10 @@ variables}.  Decision variables that are not involved in any constraints
 goal is to \emph{solve} optimization problems, i.e., finding optimal solutions
 together with the optimal value (if exists).
 
-All vectors in MATH3901 are assumed to be \emph{column
-vectors}. For convenience in notations, we shall denote the column vector \(\vect{x}=
-\begin{bmatrix}x_1&\cdots&x_n]^{T}\end{bmatrix}\) by \((x_1,\dotsc,x_n)\) if
-the entries are to be emphasized.
+All vectors in MATH3901 are assumed to be \emph{column vectors} unless
+otherwise specified. For convenience in notations, we shall denote the column
+vector \(\vect{x}= \begin{bmatrix}x_1&\cdots&x_n\end{bmatrix}^{T}\) by
+\((x_1,\dotsc,x_n)\) if the entries are to be emphasized.
 
 \item \textbf{Defining LP problems.}
 Here we shall only focus on the special case where (i) the objective function
@@ -326,7 +327,7 @@ part} and \defn{negative part} of \(x_i\) respectively.
 \end{enumerate}
 Performing these steps on the given LP problem would yield a LP problem in
 \emph{standard form} and \emph{equivalent} to the one from original, or
-obtained after the first step (changing to minimization):
+obtained after the first step (changing to minimization).
 \end{theorem}
 \begin{pf}
 Omitted; see below for an example that illustrates the main idea.
@@ -579,7 +580,7 @@ which is a polyhedron.
 \end{axis}
 \end{tikzpicture}
 \end{center}
-In general, the feasible set of \emph{every} LP problem is a polyhedron,
+In general, the feasible region of \emph{every} LP problem is a polyhedron,
 because we can always express each equality/inequality constraint in the
 ``\(\ge\)'' form:
 \begin{itemize}
@@ -757,7 +758,7 @@ meant by ``many''? To be more precise, we need to use the concept of
 
 \item\label{it:bfs} \textbf{Basic (feasible) solutions.} Let \(\vect{x}^*\in\R^n\). Then
 \(\vect{x}^*\) is a \defn{basic solution} (of \(P\)) if (i) all equality
-constraints are active at \(\vect{x}^*\), and there are \(n\) \emph{linearly
+constraints are active at \(\vect{x}^*\), and (ii) there are \(n\) \emph{linearly
 independent} constraints active at \(\vect{x}^*\).\footnote{We require linear
 independence to avoid having several ``redundant'' active constraints, like
 \(x_1^*+x_2^*+x_3^*=1\) and \(2x_1^*+2x_2^*+2x_3^*=2\), which are technically
@@ -1045,7 +1046,7 @@ nonzero).
 actually not that restrictive. In fact, if the rows of
 \(A\) are linearly \emph{dependent} for a LP problem, it indicates that
 (i) some equality constraints are redundant and can be removed to make the rows
-linearly independent without changing the feasible set, or (ii) the feasible set is
+linearly independent without changing the feasible region, or (ii) the feasible region is
 empty (when some contradictory equality constraints are present), which makes
 such LP problem not meaningful. Therefore, such assumption can be made
 throughout the discussion on standard form LP problems without loss of

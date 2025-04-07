@@ -20,7 +20,7 @@ Here, we are interested in \emph{sufficient} conditions for optimality instead:
 If the condition is satisfied, then the point in consideration must be optimal.
 Those sufficient conditions are very helpful for designing algorithms for
 solving optimization problems, that utilize the approach of ``exploring''
-different candidates of optimal solutions in the feasible set and checking
+different candidates of optimal solutions in the feasible region and checking
 their optimality through verifying the sufficient condition. The simplex method
 here is also an algorithm of this type.
 
@@ -167,7 +167,7 @@ can obtain a verifiable optimality condition for basic feasible solutions of
 standard form polyhedra.
 
 \begin{proposition}
-\label{prp:bfs-optim-iff-nonneg-redu-cost}
+\label{prp:bfs-optim-nonneg-redu-cost}
 Consider a standard form LP problem: minimizing \(\vect{c}^{T}\vect{x}\) over a
 standard form polyhedron
 \(P=\{\vect{x}\in\R^n:A\vect{x}=\vect{b},\vect{x}\ge\vect{0}\}\).  Let
@@ -175,42 +175,72 @@ standard form polyhedron
 \(\vect{c}_{B}:=(c_{B(1)},\dotsc,c_{B(m)})\), and
 \(\vect{c}_{N}:=(c_{N(1)},\dotsc,c_{N(n-m)})\). For every \(j=1,\dotsc,n\), let
 \(\bar{c}_j:=c_{j}-\vect{c}_{B}^{T}B^{-1}\vect{A}_j\) denote the \defn{reduced
-cost} of \(x_j\) (at \(\vect{x}\)). Then, \(\vect{x}\in P\) is optimal if
+cost} of \(x_j\) (at \(\vect{x}\)). Then:
+\begin{enumerate}
+\item If \(\bar{c}_j\ge 0\) for all \(j=N(1),\dotsc,N(n-m)\), then
+\(\vect{x}\in P\) is optimal.
+\item If \(\vect{x}\in P\) is optimal and \emph{nondegenerate}, then
 \(\bar{c}_j\ge 0\) for all \(j=N(1),\dotsc,N(n-m)\).
+\end{enumerate}
 \end{proposition}
-\begin{note}
-This optimality condition is \emph{verifiable} as it only involves checking
-\(n-m\) signs \cmark.
-\end{note}
-
 \begin{pf}
-Assume that \(\bar{c}_j\ge 0\) for all \(j=N(1),\dotsc,N(n-m)\).
-Fix any feasible direction \(\vect{d}\) at \(\vect{x}\). Then, we have
+\begin{enumerate}
+\item Assume that \(\bar{c}_j\ge 0\) for all \(j=N(1),\dotsc,N(n-m)\).  Fix any
+feasible direction \(\vect{d}\) at \(\vect{x}\). Then, by
+\Cref{prp:feas-dir-bfs}, we have \(\vect{d}_{B}=-B^{-1}N\vect{d}_{N}\) and
+\(\vect{d}_{N}\ge \vect{0}\). Hence,
 \begin{align*}
 \vect{c}^{T}\vect{d}&=\vect{c}_{B}^{T}\vc{\vect{d}_{B}}+\vect{c}_{N}^{T}\vect{d}_{N}
 =\vc{-}\vect{c}_{B}^{T}\vc{B^{-1}N\vect{d}_{N}}+\vect{c}_{N}^{T}\vect{d}_{N} \\
 &=(\vect{c}_{N}^{T}-\vect{c}_{B}^{T}B^{-1}N)\vect{d}_{N}
-=\sum_{i=1}^{n-m}\left(c_{N(i)}-\vect{c}_{B}^{T}B^{-1}\vect{A}_{N(i)}\right)\vect{d}_{N(i)}
-=\sum_{i=1}^{n-m}\underbrace{\bar{c}_{N(i)}}_{\ge 0}\underbrace{\vect{d}_{N(i)}}_{\ge 0}
+=\sum_{i=1}^{n-m}\left(c_{N(i)}-\vect{c}_{B}^{T}B^{-1}\vect{A}_{N(i)}\right)d_{N(i)}
+=\sum_{i=1}^{n-m}\underbrace{\bar{c}_{N(i)}}_{\ge 0}\underbrace{d_{N(i)}}_{\ge 0}
 \ge 0.
 \end{align*}
-Thus, by \Cref{prp:optimal-iff-nonneg-feas-dir} we conclude that \(\vect{x}\) is optimal.
+Thus, by \Cref{prp:optimal-iff-nonneg-feas-dir} we conclude that \(\vect{x}\)
+is optimal.  \item Assume to the contrary that \(\vect{x}\in P\) is optimal and
+nondegenerate, but \(\bar{c}_j<0\) for some \(j=N(1),\dotsc,N(n-m)\). Then, by
+setting \(\vect{d}_j=1\), \(\vect{d}_{j'}=0\) all non-basic indices \(j'\ne
+j\), and \(\vect{d}_{B}=-B^{-1}N\vect{d}_{N}\) (this will appear again in
+\labelcref{it:reduced-cost}), we know by \Cref{prp:feas-dir-bfs} that
+\(\vect{d}\) is a feasible direction at \(\vect{x}\), so \(\vect{x}+\theta \vect{d}\in P\)
+for some \(\theta>0\).
+
+But then by construction we would have
+\(\vect{c}^{T}\vect{d}\overset{\text{(see above)}}{=}
+\sum_{i=1}^{n-m}\bar{c}_{N(i)}d_{N(i)}=\bar{c}_j<0\), implying that
+\(\vect{c}^{T}(\vect{x}+\theta d)<\vect{c}^{T}\vect{d}\), contradicting to the
+optimality of \(\vect{x}\).
+\end{enumerate}
 \end{pf}
 
-\item \label{it:reduced-cost} \textbf{More about reduced cost.} To interpret reduced cost, in the
-equation \(\vect{c}^{T}\vect{d}=\sum_{i=1}^{n-m}\bar{c}_{N(i)}\vect{d}_{N(i)}\)
-from the proof above, we can set \(\vect{d}_{j}=1\) and \(\vect{d}_{j'}=0\) for
-all non-basic indices \(j'\ne j\) (and \(\vect{d}_{B}=-B^{-1}N\vect{d}_{N}\)
-still). This gives \(\vect{c}^{T}\vect{d}=\bar{c}_j\), which suggests that the
-reduced cost \(\bar{c}_j\) of \(x_j\) refers to the rate of change
-\(\vect{c}^{T}\vect{d}\) of objective function value (or \underline{cost}) when
-moving along such direction \(\vect{d}\); this is the change in cost per unit
-increase in \(x_j\) (namely \(c_j\)), \underline{reduced} by the amount
+\begin{remark}
+\item This optimality condition is \emph{verifiable} as it only involves checking
+\(n-m\) signs \cmark.
+\item Due to \Cref{prp:bfs-optim-nonneg-redu-cost}, a basis matrix is said to be
+\defn{optimal} if (i) \(\vect{x}_{B}=B^{-1}\vect{b}\ge\vect{0}\)
+\emph{(feasibility)} and (ii) \(\bar{c}_j\ge 0\) for all \(j=N(1),\dotsc,N(n-m)\)
+\emph{(optimality)}. If we have obtained a basic feasible solution with \underline{optimal}
+basis matrix, then such basic feasible solution must be \underline{optimal}.
+Also, every nondegenerate \underline{optimal} basic feasible solution must
+admit an \underline{optimal} basis matrix.
+\end{remark}
+
+\item \label{it:reduced-cost} \textbf{More about reduced cost.} To interpret
+reduced cost, in the equation
+\(\vect{c}^{T}\vect{d}=\sum_{i=1}^{n-m}\bar{c}_{N(i)}\vect{d}_{N(i)}\) from the
+proof above, we can set \(\vect{d}_{j}=1\), \(\vect{d}_{j'}=0\) for all
+non-basic indices \(j'\ne j\), and \(\vect{d}_{B}=-B^{-1}N\vect{d}_{N}\). This
+gives \(\vect{c}^{T}\vect{d}=\bar{c}_j\), which suggests that the reduced cost
+\(\bar{c}_j\) of \(x_j\) refers to the rate of change \(\vect{c}^{T}\vect{d}\)
+of objective function value (or \underline{cost}) when moving along such
+direction \(\vect{d}\); this is the change in cost per unit increase in \(x_j\)
+(namely \(c_j\)), \underline{reduced} by the amount
 \(\vect{c}_{B}^{T}B^{-1}\vect{A}_j\) (serving as an adjustment for the changes
 in basic variables from moving along such direction).
 
 With this interpretation, it should be intuitive that the reduced cost of any
-basic variable \(x_j\) are always zero, as the adjustment would intuitively
+basic variable \(x_j\) is always zero, as the adjustment would intuitively
 reduce the whole rate of change of cost from the increase in basic variable. It
 can also be mathematically proved as follows:
 
@@ -230,11 +260,12 @@ Since \(x_j\) is a basic variable, we know \(j=B(k)\) for some
 \]
 \end{pf}
 
-Because of this, we can rewrite the above sufficient condition for optimality
-in the \emph{row} vector form:
-\((\bar{c}_{1},\dotsc,\bar{c}_{n})^{T}=:\bar{\vect{c}}^{T}\ge\vect{0}\), where we have
-\(\bar{\vect{c}}^{T}=\vect{c}^{T}-\vect{c}_{B}^{T}B^{-1}A\). In words, this means a
-basic feasible solution is optimal if the reduced costs (of all variables) are
+Because of this, we can rewrite the optimality condition from
+\Cref{prp:bfs-optim-nonneg-redu-cost} in the \emph{row} vector form:
+\((\bar{c}_{1},\dotsc,\bar{c}_{n})^{T}=:\bar{\vect{c}}^{T}\ge\vect{0}\), where
+we have \(\bar{\vect{c}}^{T}=\vect{c}^{T}-\vect{c}_{B}^{T}B^{-1}A\) (here
+\(\vect{0}\) denotes zero \emph{row} vector). In words, this means a basic
+feasible solution is optimal if the reduced costs (of all variables) are
 nonnegative.
 \end{enumerate}
 \subsection{Development and Implementation of the Simplex Method}
@@ -434,7 +465,7 @@ the \defn{simplex method} as follows.
 \item If \(\bar{c}_j\ge 0\) for all non-basic indices \(j\), then the current
 basic feasible solution \(\vect{x}\) is optimal, and the algorithm terminates
 \faIcon[regular]{pause-circle}.
-\item Otherwise, fix a non-basic index \mgc{\(j\)} with \(\bar{c}_\mgc{j}<0\).
+\item Otherwise, fix a non-basic index \mgc{\(j\)} with \(\bar{c}_{\mgc{j}}<0\).
 \end{enumerate}
 \item Compute \(\vect{u}=B^{-1}\vect{A}_{\mgc{j}}\) (which equals
 \(-\vect{d}_{B}\)).
@@ -448,10 +479,10 @@ basic feasible solution \(\vect{x}\) is optimal, and the algorithm terminates
 \end{enumerate}
 \item Let \(\ell\) be a minimizing index, i.e.,
 \(x_{B(\ell)}/u_{\ell}=\theta^{*}\). Form a new basis matrix \(\bar{B}\) by
-replacing the column \(\vect{A}_{B(\ell)}\) by \(\vect{A}_\mgc{j}\). For the new
+replacing the column \(\vect{A}_{B(\ell)}\) by \(\vect{A}_{\mgc{j}}\). For the new
 basic feasible solution \(\vect{x}^*\), the basic variables are given by
 \(x_{B(i)}^{*}=x_{B(i)}-\theta^{*}u_i\) for all \(i\ne\ell\) and
-\(x_\mgc{j}^{*}=\theta^{*}\) (and the non-basic variables are all zero).
+\(x_{\mgc{j}}^{*}=\theta^{*}\) (and the non-basic variables are all zero).
 \item Repeat (1)-(4) with the starting basic feasible solution updated to the
 new one obtained in the previous iteration, until the algorithm terminates
 \faIcon[regular]{pause-circle}.
@@ -459,7 +490,7 @@ new one obtained in the previous iteration, until the algorithm terminates
 \begin{remark}
 \item We do not need to explicitly compute the movement direction \(\vect{d}\) in the
 process.
-\item It can be shown that, as long as the feasible set is nonempty and every
+\item It can be shown that, as long as the feasible region is nonempty and every
 basic feasible solution is nondegenerate, the algorithm above must terminate
 after a finite number of iterations.
 \end{remark}
@@ -541,10 +572,10 @@ as follows.
 \item If \(\bar{c}_j\ge 0\) for all non-basic indices \(j\), then the current
 basic feasible solution \(\vect{x}\) is optimal, and the algorithm terminates
 \faIcon[regular]{pause-circle}.
-\item Otherwise, fix a non-basic index \mgc{\(j\)} with \(\bar{c}_\mgc{j}<0\).
+\item Otherwise, fix a non-basic index \mgc{\(j\)} with \(\bar{c}_{\mgc{j}}<0\).
 \end{enumerate}
 \item Compute \(\vect{u}=B^{-1}\vect{A}_{\mgc{j}}\) (which equals
-\(-\vect{d}_{B}\)).\begin{note}
+\(-\vect{d}_{B}\)). \begin{note}
 The reason why we use the vector \(\vect{u}\) instead of \(\vect{d}_{B}\) here will become transparent later.
 \end{note}
 \begin{enumerate}
@@ -557,10 +588,10 @@ The reason why we use the vector \(\vect{u}\) instead of \(\vect{d}_{B}\) here w
 \end{enumerate}
 \item Let \(\ell\) be a minimizing index, i.e.,
 \(x_{B(\ell)}/u_{\ell}=\theta^{*}\). Form a new basis matrix \(\bar{B}\) by
-replacing the column \(\vect{A}_{B(\ell)}\) by \(\vect{A}_\mgc{j}\). For the new
+replacing the column \(\vect{A}_{B(\ell)}\) by \(\vect{A}_{\mgc{j}}\). For the new
 basic feasible solution \(\vect{x}^*\), the basic variables are given by
 \(x_{B(i)}^{*}=x_{B(i)}-\theta^{*}u_i\) for all \(i\ne\ell\) and
-\(x_\mgc{j}^{*}=\theta^{*}\) (and the non-basic variables are all zero).
+\(x_{\mgc{j}}^{*}=\theta^{*}\) (and the non-basic variables are all zero).
 
 \item \vc{Form an augmented matrix
 \(\begin{bmatrix}B^{-1}|\vect{u}\end{bmatrix}\in\R^{m\times (m+1)}\).
@@ -1099,10 +1130,24 @@ then every optimal solution of the big-\(M\) problem satisfies
 \item\label{it:big-m-get-optim} If the big-\(M\) problem has an optimal solution of the form
 \((\vect{x},\vect{y})=(\vect{x}^{*},\vect{0})\), then \(\vect{x}^*\) is an
 optimal solution of the original LP problem.
+\item \label{it:big-m-neg-inf} If the big-\(M\) problem has an optimal value of
+\(-\infty\), then the original LP problem is either infeasible or has an optimal
+value of \(-\infty\), provided that \(M\) is sufficiently large.
 \end{enumerate}
 \begin{pf}
 \begin{enumerate}
-\item Omitted.
+\item Assume to the contrary that the original LP problem is feasible and has a
+finite optimal value, while there is an optimal solution
+\((\widetilde{\vect{x}},\vect{y})\) of the big-\(M\) problem satisfying
+\(y_k>0\) for some \(k=1,\dotsc,m\). Let \(\vect{x}^*\) denote an optimal
+solution of the original LP problem, which exists due to the finiteness of the
+optimal value. Then, note that \((\vect{x},\vect{y})=(\vect{x}^*,\vect{0})\) is
+a feasible solution of the big-\(M\) problem. With \(M\) being sufficiently
+large, we would have
+\[
+\vect{c}^{T}\vect{x}^{*}+M\vect{0}<\vect{c}^{T}\widetilde{\vect{x}}+My_k\le\vect{c}^{T}\widetilde{\vect{x}}+M\sum_{i=1}^{m}y_i,
+\]
+which contradicts to the optimality of \((\widetilde{\vect{x}},\vect{y})\).
 \item Since \((\vect{x},\vect{y})=(\vect{x}^{*},\vect{0})\) is optimal for the
 big-\(M\) problem, we have \(\vect{c}^{T}\vect{x}^*\le
 \vect{c}^{T}\vect{x}+M(y_1+\dotsb+y_m)\) for every feasible solution
@@ -1111,6 +1156,30 @@ big-\(M\) problem, we have \(\vect{c}^{T}\vect{x}^*\le
 and \(\vect{x}\ge\vect{0}\). Hence, (\(\vect{x},\vect{0})\) is a feasible
 solution of the big-\(M\) problem, which implies that
 \(\vect{c}^{T}\vect{x}^{*}\le\vect{c}^{T}\vect{x}+M(0)=\vect{c}^{T}\vect{x}\).
+
+\item Assume to the contrary that the big-\(M\) problem has an optimal value of
+\(-\infty\), while the original LP problem has an optimal solution
+\(\vect{x}^*\). Then, after applying the simplex method on the problem, at the
+termination we would get a nonzero feasible direction
+\(\vect{d}=(\vect{d}_{\vect{x}},\vect{d}_{\vect{y}})\ge\vect{0}\) at a feasible
+solution \((\vect{x},\vect{y})\), that leads a decrease in the objective
+function value, i.e.,
+\(\vect{c}^{T}\vect{d}_{\vect{x}}+M\sum_{i=1}^{m}d_{y_i}<0\).
+
+With \(M\) being sufficiently large, we must have \(d_{y_i}=0\) for all
+\(i=1,\dotsc,m\); otherwise the inequality above would be contradicted by
+setting sufficiently large \(M\). Combining this with the inequality above
+gives \(\vect{c}^{T}\vect{d}_{\vect{x}}<0\).
+
+Since \(\vect{d}\ge\vect{0}\) is a feasible direction at \((\vect{x},\vect{y})\) for the
+big-\(M\) problem, we have
+\(A(\vect{x}+\vect{d}_{\vect{x}})+(\vect{y}+\vect{d}_{\vect{y}})=\vect{0}\),
+which implies
+\(A\vect{d}_{\vect{x}}=\vect{b}-(A\vect{x}+\vect{y})=\vect{b}-\vect{b}=\vect{0}\).
+Hence, \(\vect{d}_{\vect{x}}\) is a feasible direction at \(\vect{x}^*\) also.
+But then \(\vect{c}^{T}\vect{d}_{\vect{x}}<0\) would imply that
+\(\vect{c}^{T}(\vect{x}^{*}+\vect{d}_{\vect{x}})<\vect{c}^{T}\vect{x}^{*}\),
+contradicting to the optimality of \(\vect{x}^{*}\).
 \end{enumerate}
 \end{pf}
 
@@ -1131,10 +1200,14 @@ iterations (e.g., in the tableau method): We always have \(M>c\) when comparing
 \begin{enumerate}
 \item If the optimal solution obtained is of the form
 \((\vect{x},\vect{y})=(\vect{x}^{*},\vect{0})\), then \(\vect{x}^*\) is an
-optimal solution of the original LP problem.
-\item If the optimal solution obtained does not satisfy \(\vect{y}=\vect{0}\),
-then the original LP problem is either infeasible or has an optimal
-value of \(-\infty\).
+optimal solution of the original LP problem (by \labelcref{it:big-m-get-optim}).
+\item If the optimal solution obtained does not satisfy \(\vect{y}=\vect{0}\)
+or the big-\(M\) problem has an optimal value of \(-\infty\), then the original
+LP problem is either infeasible or has an optimal value of \(-\infty\).
+\begin{note}
+Here we use \labelcref{it:big-m-neg-inf} and the contrapositive of
+\labelcref{it:big-m-y-zero}.
+\end{note}
 \end{enumerate}
 \end{enumerate}
 \end{enumerate}
