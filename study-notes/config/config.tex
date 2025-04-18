@@ -4,6 +4,7 @@
 \usepackage{amssymb}
 \usepackage{diagbox}
 \usepackage{makecell}
+\usepackage{aligned-overset}
 \usepackage{bm}
 \usepackage{multirow}
 \usepackage{mleftright}
@@ -21,7 +22,6 @@
 \usepackage{imakeidx}
 \usepackage[style=apa]{biblatex}
 \usepackage{tikz}
-
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{cleveref}
 
@@ -61,14 +61,18 @@
 \newcommand*{\indicset}[1]{\mathbf{1}_{\left\{#1\right\}}}
 \newcommand*{\eqd}{\overset{d}=}
 \newcommand*{\apxsim}{\overset{\text{approx.}}\sim}
-\newcommand*{\ndist}[1]{\operatorname{N}\left(#1\right)}
 
 \newcommand*{\rk}[1]{\operatorname{rank}(#1)}
 \newcommand*{\spn}[1]{\operatorname{span}\left(#1\right)}
 \newcommand*{\vect}[1]{\bm{#1}}
 
+\newcommand*{\conv}[1]{\operatorname{conv}\left(#1\right)}
+
+\newcommand*{\vol}[1]{\operatorname{Vol}\left(#1\right)}
+
 \newcommand*{\N}{\mathbb{N}}
 \newcommand*{\R}{\mathbb{R}}
+\newcommand*{\Z}{\mathbb{Z}}
 \newcommand*{\Q}{\mathbb{Q}}
 \newcommand*{\pow}[1]{\mathcal{P}\left(#1\right)}
 
