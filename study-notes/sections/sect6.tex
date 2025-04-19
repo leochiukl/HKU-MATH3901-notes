@@ -1,2 +1,470 @@
 \section{Interior Point Methods}
 \label{sect:int-pt-methods}
+\begin{enumerate}
+\item Geometrically speaking, the simplex method solves LP problems by moving
+between vertices of the feasible region and improving the objective function
+values at each iteration. The vertices are located at the \emph{boundary} of the
+feasible region. On the other hand, for \underline{interior point} methods, we are moving
+within the \emph{interior} of the feasible region to find optimal solution. Interior
+point methods serve as viable alternatives to the simplex method, and often
+outperforms the simplex method for ``large'' LP problems, due to the theoretical
+guarantee on the computational efficiency (running in polynomial time).
+
+In \Cref{sect:int-pt-methods}, we will study three common kinds of interior point methods,
+namely (i) the \emph{affine scaling algorithm}, (ii) the \emph{potential reduction}
+algorithm, and (iii) \emph{path following algorithms}. Among the three types of
+interior point methods, the affine scaling algorithm should be the simplest
+one, so we first study this algorithm.
+\end{enumerate}
+\subsection{The Affine Scaling Algorithm}
+\begin{enumerate}
+\item \textbf{Geometrical intuition.} Consider a standard form LP
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+and its dual
+\begin{align*}
+\text{max}\quad&\vect{b}^{T}\vect{p} \\
+\text{s.t.}\quad&A^{T}\vect{p}=\vect{c} \\
+\end{align*}
+where \(A\in\R^{m\times n}\) and \(\vect{b}\in\R^{m}\). Let
+\(P=\{\vect{x}\in\R^n:A\vect{x}=\vect{b},\vect{x}\ge\vect{0}\}\) denote the
+feasible region for the primal problem. The \defn{interior} (or \defn{relative
+interior}) of P is given by \(\{\vect{x}\in
+P:\vect{x}>\vect{0}\}\)\footnote{Here, the ``interior'' is taken with respect
+to a certain \emph{affine subspace} rather than the Euclidean space
+\(\R^{n}\).}, and its elements are called interior points. Using the property
+that minimizing the objective function \(\vect{c}^{T}\vect{x}\) over an
+\emph{ellipsoid} is easier than doing that directly over \(P\), the affine scaling
+algorithm moves between points in the interior of \(P\) by performing
+minimization of \(\vect{c}^{T}\vect{x}\) over ellipsoids in the interior,
+thereby reducing the objective function value at each iteration (like the
+simplex method). This procedure is graphically represented as follows:
+\begin{center}
+\begin{tikzpicture}
+\draw[blue] (0,3) -- (2,4)  -- (5,2) -- (3,0) -- (1,0.5) -- cycle;
+\draw[dashed, violet] (-1.5,\fpeval{3-2.25}) -- (1.5,\fpeval{3+2.25});
+\draw[-Latex, violet] (1,4.5) --node[midway, above]{\(\vect{c}\)} (1.75,4);
+\draw[magenta, fill] (0,3) circle [radius=0.7mm];
+\node[magenta] () at (0,3.3) {\(\vect{x}^{*}\)};
+\draw[ForestGreen] (2.5,1.8) ellipse [x radius=0.5cm, y radius=0.75cm];
+\draw[black, fill] (2.5,1.8) circle [radius=0.7mm];
+\draw[black, fill] (2.15,2.35) circle [radius=0.7mm];
+\draw[->, thick, orange] (2.5,1.8) -- (2.15,2.35);
+\node[] () at (2.5,1.5) {\(\vect{x}^{0}\)};
+\node[] () at (1.9,2.35) {\(\vect{x}^{1}\)};
+\draw[dashed, violet, opacity=0.4] (\fpeval{2.5-1.5},\fpeval{1.8-2.25}) -- (\fpeval{2.5+1.5},\fpeval{1.8+2.25});
+\draw[dashed, violet, opacity=0.4] (\fpeval{2.15-1.5},\fpeval{2.35-2.25}) -- (\fpeval{2.15+1.5},\fpeval{2.35+2.25});
+\node[blue] () at (3,4) {\(P\)};
+\end{tikzpicture}
+\begin{tikzpicture}
+\draw[blue] (0,3) -- (2,4)  -- (5,2) -- (3,0) -- (1,0.5) -- cycle;
+\draw[dashed, violet] (-1.5,\fpeval{3-2.25}) -- (1.5,\fpeval{3+2.25});
+\draw[-Latex, violet] (1,4.5) --node[midway, above]{\(\vect{c}\)} (1.75,4);
+\draw[magenta, fill] (0,3) circle [radius=0.7mm];
+\node[magenta] () at (0,3.3) {\(\vect{x}^{*}\)};
+\draw[ForestGreen, opacity=0.4] (2.5,1.8) ellipse [x radius=0.5cm, y radius=0.75cm];
+\draw[black, fill] (2.5,1.8) circle [radius=0.7mm];
+\draw[black, fill] (2.15,2.35) circle [radius=0.7mm];
+\draw[ForestGreen, rotate around={5:(2.15,2.35)}] (2.15,2.35) ellipse [x radius=0.3cm, y radius=0.6cm];
+\draw[black, fill] (2,2.9) circle [radius=0.7mm];
+\draw[->, thick, orange, opacity=0.4] (2.5,1.8) -- (2.15,2.35);
+\draw[->, thick, orange] (2.15,2.35) -- (2,2.9);
+\node[] () at (2.5,1.5) {\(\vect{x}^{0}\)};
+\node[] () at (1.9,2.35) {\(\vect{x}^{1}\)};
+\node[] () at (1.7,3) {\(\vect{x}^{2}\)};
+\draw[dashed, violet, opacity=0.4] (\fpeval{2.15-1.5},\fpeval{2.35-2.25}) -- (\fpeval{2.15+1.5},\fpeval{2.35+2.25});
+\draw[dashed, violet, opacity=0.4] (\fpeval{2-1.5},\fpeval{2.9-2.25}) -- (\fpeval{2+1.5},\fpeval{2.9+2.25});
+\node[blue] () at (3,4) {\(P\)};
+\end{tikzpicture}
+\end{center}
+We start with an interior point \(x_0\) of \(P\), and form an ellipsoid \(S_0\)
+centered at \(x_0\) that is contained in the interior of \(P\). Minimizing the
+objective function \(\vect{c}^{T}\vect{x}\) over the ellipsoid \(S_0\) (easy)
+yields an optimal solution \(x_1\) that is in the interior of \(P\), which has a
+smaller objective function value than \(x_0\). Next, we again form an
+ellipsoid centered at \(x_1\) in the interior of \(P\), and the process continues.
+Intuitively, after sufficiently many iterations, the resulting point would be
+fairly close to the actual optimal solution \(\vect{x}^{*}\).
+
+Equipped with some geometrical intuition about the affine scaling algorithm, we
+will then study its details.
+\item \textbf{Forming an ellipsoid in the interior of \(P\).} In the affine
+scaling algorithm, we would need to form ellipsoids in interior, so let us
+first investigate how that can be done. To form such ellipsoids, the following
+result is helpful.
+\begin{lemma}
+\label{lma:form-ellip-interior}
+Let \(\beta\in (0,1)\) be a scalar, \(\vect{y}\in\R^{n}\) with \(\vect{y}>\vect{0}\),
+and let \(S:=\{\vect{x}\in\R^{n}:\sum_{i=1}^{n}(x_i-y_i)^{2}/y_i^{2}\le\beta^{2}\}\).
+Then we have \(\vect{x}>\vect{0}\) for all \(\vect{x}\in S\).
+\end{lemma}
+\begin{pf}
+Fix any \(\vect{x}\in S\). For every \(i=1,\dotsc,n\), we have \((x_i-y_i)^{2}\le\beta^{2}y_i^{2}
+<y_i^{2}\), and hence \(|x_i-y_i|<y_i\). This particularly implies that \(y_i-x_i<y_i\),
+and so \(x_i>0\).
+\end{pf}
+
+To see how result helps us construct such ellipsoids, consider the following.
+Fix an interior point \(\vect{y}\) of \(P\) and let \(Y=\diag{y_1,\dotsc,y_n}\)
+denote the \(n\times n\) diagonal matrix with \((i,i)\)th entry being \(y_i\) for all \(i=1,\dotsc,n\). As \(y_1,\dotsc,y_n>0\), \(Y\) is invertible, and hence we can
+express \(S\) as
+\[
+S=\left\{\vect{x}\in\R^{n}:\sum_{i=1}^{n}\frac{(x_i-y_i)^{2}}{y_i^{2}}\le\beta^{2}\right\}
+=\{\vect{x}\in\R^{n}:(\vect{x}-\vect{y})^{T}(Y^{-1})^{2}(\vect{x}-\vect{y})\le\beta^{2}\}
+=\{\vect{x}\in\R^{n}:\|Y^{-1}(\vect{x}-\vect{y})\|\le\beta\}
+\]
+where \(\|\cdot\|\) denotes the Euclidean norm and satisfies that
+\(\|\vect{v}\|^{2}=\vect{v}^{T}\vect{v}\).  As
+\((Y^{-1})^{2}=\diag{y_1^{-2},\dotsc,y_n^{-2}}\) is positive definite, \(S\) is
+indeed an ellipsoid centered at \(\vect{y}\). Then, \(S_0:=S\cap
+\{\vect{x}\in\R^{n}:A\vect{x}=\vect{b}\}\) would be a section of ellipsoid
+centered at y that is contained in the interior of \(P\); sometimes we also
+call \(S_0\) simply as ellipsoid (with respect to \(P\)). This provides us a
+method for obtaining ellipsoids in the interior of \(P\) centered at desired
+points.
+\item \textbf{Minimization over ellipsoid.} After forming an ellipsoid \(S_0\)
+centered at y in the interior of \(P\), we would need to perform minimization
+over the ellipsoid \(S_0\) in the affine scaling algorithm:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\|Y^{-1}(\vect{x}-\vect{y})\|\le\beta
+\end{align*}
+where \(\beta\in (0,1)\), \(\vect{y}>\vect{0}\), and \(Y=\diag{y_1,\dotsc,y_n}\).
+
+Previously we have claimed that solving such minimization problem is “easy”.
+Here we will justify this claim. By “easy”, we mean that a closed-form formula
+is available for getting an optimal solution.  Before discussing about it, we
+first do some preparatory work to simplify the minimization problem a bit.
+
+Let \(\vect{d}=\vect{x}-\vect{y}\) denote the vector of “movement”. By the
+feasibility of \(\vect{y}\), we have \(A\vect{y}=\vect{b}\). Also, by
+construction, every \(x\in S_0\) satisfies \(A\vect{x}=\vect{b}\). These imply
+that \(A\vect{d}=\vect{0}\) Now, consider the following problem that performs
+minimization with respect to \(\vect{d}\) instead of \(\vect{x}\):
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{d} \\
+\text{s.t.}\quad&A\vect{d}=\vect{b} \\
+&\|Y^{-1}\vect{d}\|\le\beta
+\end{align*}
+where \(\beta\in (0,1)\) and \(Y=\diag{y_1,\dotsc,y_n}\).
+
+Solving this minimization problem would give us enough ingredient for solving
+the minimization problem above, since for each optimal solution
+\(\vect{d}^{*}\) here, a corresponding optimal solution for the minimization
+problem above would be \(\vect{x}^{*}=\vect{y}+\vect{d}^{*}\). Thus we will
+focus on this (simpler) problem henceforth.  The following result provides a
+closed-form formula for optimal solution to this problem.
+
+\begin{proposition}
+\label{prp:min-ellip-closed-form}
+Suppose that the rows of \(A\) are linearly independent and \(\vect{c}\) is not
+a linear combination of the rows of \(A\). Let \(\vect{y}>\vect{0}\). Then an
+optimal solution to the problem above is
+\[
+\vect{d}^{*}=-\beta\frac{Y^{2}(\vect{c}-A^{T}\vect{p})}{\|Y(\vect{c}-A^{T}\vect{p}\|}
+\]
+with \(Y=\diag{y_1,\dotsc,y_n}\),
+\(\vect{p}=(AY^{2}A^{T})^{-1}AY^{2}\vect{c}\), and \(\beta\in (0.1)\).
+Furthermore, \(\vect{x}^{*}=\vect{y}+\vect{d}^{*}\) is an interior point of
+\(P\) and satisfies that \(\vect{c}^{T}\vect{x}^{*}<\vect{c}^{T}\vect{y}\)
+\emph{(being in interior and decrease in objective function value after the
+move)}.
+\end{proposition}
+\begin{pf}
+\textbf{Showing that \(\vect{d}^{*}\) and \(\vect{p}\) are well-defined.} First
+of all, we will show the well-definedness of \(\vect{d}^{*}\) and \(\vect{p}\)
+by showing that \(\|Y(\vect{c}-A^{T}\vect{p}\|\ne\vect{0}\) and \(AY^{2}A^{T}\)
+is invertible respectively. For the former, it follows from the assumption that
+\(\vect{c}\) is not a linear combination of the rows of \(A\), which implies that \(\vect{c}-A^{T}\vect{p}\ne\vect{0}\). For the latter, consider the following. Since the rows of \(A\) are linearly
+independent, from linear algebra we know that \(A\) and \(A^{T}\) are both invertible.
+Also, since \(\vect{y}>\vect{0}\), we know \(y_1^{2},\dotsc,y_n^{2}>0\), and so
+\(Y^{2}\) is invertible. Therefore, \(AY^{2}A^{T}\) is invertible.
+
+\textbf{Showing the feasibility of \(\vect{d}^{*}\).} Since \(\vect{y}>0\), we
+know \(Y\) is invertible, thus
+\[
+Y^{-1}\vect{d}^{*}=-\beta\frac{Y(\vect{c}-A^{T}\vect{p})}{\|Y(\vect{c}-A^{T}\vect{p})\|}.
+\]
+Taking \(\|\cdot\|\) on both sides then gives \(\|Y^{-1}\vect{d}^{*}\|=\beta\).
+So for the feasibility it remains to show that \(A\vect{d}^{*}=\vect{0}\),
+which is equivalent to \(AY^{2}(\vect{c}-A^{T}\vect{p})=\vect{0}\). This holds because
+\(AY^{2}(\vect{c}-A^{T}\vc{\vect{p}})=AY^{2}(\vect{c}-A^{T}\vc{(AY^{2}A^{T})^{-1}AY^{2}\vect{c}})
+=AY^{2}\vect{c}-AY^{2}A^{T}(AY^{2}A^{T})^{-1}AY^{2}\vect{c}=AY^{2}\vect{c}-AY^{2}\vect{c}=\vect{0}\).
+
+\textbf{Showing the optimality of \(\vect{d}^{*}\).} For every feasible solution
+\(\vect{d}\) to the problem above, we have \(A\vect{d}=\vect{0}\) and \(\|Y^{-1}\vect{d}\|\le\beta\),
+and so
+\begin{align*}
+\vect{c}^{T}\vect{d}\overset{(A\vect{d}=\vect{0})}&{=}(\vect{c}^{T}-\vect{p}^{T}A)\vect{d}
+=(\vect{c}^{T}-\vect{p}^{T}A)YY^{-1}\vect{d} \\
+&=(\vc{Y(\vect{c}-A^{T}\vect{p})})^{T}\orc{Y^{-1}\vect{d}}
+\underset{(\|\vect{u}\|\|\vect{v}\|\ge \vect{u}^{T}\vect{v}\ge-\|\vect{u}\|\|\vect{v}\|)}
+{\overset{\text{(Cauchy-Swartz)}}{\ge}}-\|\vc{Y(\vect{c}-A^{T}\vect{p})}\|\|\orc{Y^{-1}\vect{d}}\| \\
+&\ge\mgc{-\orc{\beta}\|Y(\vect{c}-A^{T}\vect{p})\|}\overset{(\vect{v}^{T}\vect{v}=\|\vect{v}\|^{2})}{=}
+-\beta\frac{[Y(\vect{c}-A^{T}\vect{p})]^{T}[Y(\vect{c}-A^{T}\vect{p})]}{\|Y(\vect{c}-A^{T}\vect{p})\|} \\
+&=-(\vect{c}^{T}-\vect{p}^{T}A)\beta\frac{Y^{2}(\vect{c}-A^{T}\beta)}{\|\vect{Y}(\vect{c}-A^{T}\vect{p}\|}
+=(\vect{c}^{T}-\vect{p}^{T}A)\vect{d}^{*}\overset{(A\vect{d}^{*}=\vect{0})}{=}
+\mgc{\vect{c}^{T}\vect{d}^{*}},
+\end{align*}
+which means that \(\vect{d}^{*}\) is optimal.
+
+\textbf{Showing that the movement results in an interior point with a drop in objective function
+value.} Note that \(\vect{c}^{T}\vect{x}^{*}=\vect{c}^{T}\vect{y}+\mgc{\vect{c}^{T}\vect{d}^{*}}
+=\vect{c}^{T}\vect{y}\mgc{-\beta\|Y(\vect{c}-A^{T}\vect{p})\|}\). Since
+\(\|Y(\vect{c}-A^{T}\vect{p})\|>0\), we have \(\vect{c}^{T}\vect{x}^{*}<\vect{c}^{T}\vect{y}\).
+Also, with \(A\vect{d}^{*}=\vect{0}\) and \(\|Y^{-1}\vect{d}^{*}\|\le\beta\),
+we have \(A\vect{x}^{*}=\vect{b}\) and \(\|Y^{-1}(\vect{x}^{*}-\vect{y})\|\le\beta\),
+and the latter implies that \(\vect{x}^{*}>\vect{0}\) by \Cref{lma:form-ellip-interior}.
+Hence, \(\vect{x}^{*}\) lies in the interior of \(P\).
+\end{pf}
+
+\begin{remark}
+\item \emph{(relationship with the iterations of the affine scaling algorithm)}
+\Cref{prp:min-ellip-closed-form} demonstrates that our geometrical intuition of
+“forming an ellipsoid and then minimizing over it to move to another point in
+the interior” actually works. It shows that we can indeed perform such
+iterations to incrementally decrease the objective function value while
+remaining in the interior.
+\item \emph{(optimal value of the original problem is \(-\infty\) if
+\(\vect{d}^{*}\ge\vect{0}\))} If the optimal solution obtained satisfies
+\(\vect{d}^{*}\ge\vect{0}\), then we can conclude that the optimal value of the
+original minimization problem with respect to \(\vect{x}\) is \(-\infty\).  To
+see this, note that in such case we would have
+\(\vect{x}^{*}+\alpha\vect{d}^{*}>\vect{0}\) and
+\(A(\vect{x}^{*}+\alpha\vect{d}^{*})=A\vect{x}^{*}+\alpha
+A\vect{d}^{*}=\vect{b}\) for all \(\alpha>0\). By
+\Cref{prp:min-ellip-closed-form}, we know that
+\(\vect{c}^{T}\vect{d}^{*}=\vect{c}^{T}\vect{x}^{*}-\vect{c}^{T}\vect{y}<0\),
+and hence the objective function value in the original minimization problem can
+get arbitrarily negative as we increase \(\alpha\).
+\end{remark}
+\item \textbf{Interpreting the vector p as estimate for dual basic solution.}
+In \Cref{prp:min-ellip-closed-form}, we have a rather complicated expression
+for the vector \(\vect{p}\), but it actually carries a somewhat intuitive
+interpretation, and can be viewed as a kind of “estimate” of dual basic
+solution. To see this, we consider the case where the vector \(\vect{y}\) in
+\Cref{prp:min-ellip-closed-form} is a nondegenerate basic feasible solution.
+WLOG, we assume that the first \(m\) variables in \(\vect{y}\) are basic, so we
+can write \(\vect{y}=(y_1,\dotsc,y_m,0,\dotsc,0)\), and hence \(Y=\diag{y_1,\dotsc,y_m,0,\dotsc,0}\).
+Let \(Y_0:=\diag{y_1,\dotsc,y_m}\). Then we have
+\(AY=\begin{bmatrix}BY_0&\vect{0}\end{bmatrix}\in\R^{m\times n}\) where \(B^{m\times m}\)
+is the corresponding basis matrix. Therefore, we can write
+\begin{align*}
+\vect{p}&=(AY^{2}A^{T})^{-1}AY^{2}\vect{c}=(AY(AY)^{T})^{-1}AYY\vect{c}
+=(BY_0(BY_0)^{T})^{-1}BY_0^{2}\vect{c}_{B} \\
+&=(B^{T})^{-1}(Y_0^{-1})^{2}B^{-1}BY_0^{2}\vect{c}_{B}
+=(B^{-1})^{T}\vect{c}_{B}
+\end{align*}
+where \(\vect{c}_{B}\) is the vector of coefficients in the objective function
+for the basic variables. Note that the final expression is the same as the
+associated dual basic solution \(\vect{y}_{B}\).
+
+But of course, the vector \(\vect{y}\) in \Cref{prp:min-ellip-closed-form}
+would generally \emph{not} a nondegenerate basic feasible solution, and so the
+vector \(\vect{p}\) would \emph{not} be a dual basic solution exactly.
+However, heuristically, we may treat \(\vect{p}\) as an “estimate” for dual
+basic solution.
+
+\item \textbf{Optimality condition based on duality gap.} Although the vector
+\(\vect{p}\) is only an “estimate” for dual basic solution, it can still be
+used to construct an (exact) optimality condition for the affine scaling
+algorithm. To start with, note that under the case where \(\vect{y}\) is a
+nondegenerate basic feasible solution, the vector
+\(\vect{r}:=\vect{c}-A^{T}\vect{p}\) can be expressed as
+\(\vect{r}=\vect{c}-A^{T}(B^{-1})^{T}\vect{c}_{B}\) which is the vector
+\(\bar{\vect{c}}\) of \emph{reduced costs}. Hence, with a similar idea as
+before, the vector r can be regarded as an ``estimate'' for the vector of
+reduced costs.
+
+Recall from the proof of \Cref{lma:optim-prim-feas-dual-feas} that dual
+feasibility is equivalent to having nonnegative reduced costs. Although the
+vector \(\vect{r}\) here only serve as an “estimated” reduced cost vector, the
+same property holds for \(\vect{r}\) \emph{always}, because we have
+\(\vect{r}\ge\vect{0}\iff \vect{c}-A^{T}\vect{p}\ge\vect{0}\iff
+A^{T}\vect{p}\le\vect{c}\), where the last inequality corresponds to the dual
+feasibility.
+
+To derive the \emph{optimality} condition, we would need the notion of \defn{duality
+gap}, which refers to the difference between primal objective function value and
+dual objective function value: \(\vect{c}^{T}\vect{y}-\vect{b}^{T}\vect{p}\),
+where \(\vect{y}\) and \(\vect{p}\) are primal and dual feasible solutions
+respectively. By weak duality, it is always nonnegative.  Due to the primal
+feasibility of \(\vect{y}\), we can write
+\(\vect{c}^{T}\vect{y}-\vect{b}^{T}\vect{p}=\vect{c}^{T}\vect{y}-\vect{p}^{T}\vect{b}=\vect{c}^{T}\vect{y}-\vect{p}^{T}A\vect{y}=\vect{r}^{T}\vect{y}\),
+so the duality gap is given by \(\vect{r}^{T}\vect{y}\). Also, by
+\Cref{cor:primal-dual-optim}, the duality gap \(\vect{r}^{T}\vect{y}\) being
+zero would imply that \(\vect{y}\) and \(\vect{p}\) are optimal solutions to
+the primal and the dual respectively.  From this result, it is natural to
+anticipate that under such assumptions, if the duality gap
+\(\vect{r}^{T}\vect{y}\) is “small”, then \(\vect{y}\) and \(\vect{p}\)
+would be “near optimal” solutions. This intuition is formalized by the
+following result.
+\begin{proposition}
+\label{prp:near-primal-dual-optimal}
+Let \(\vect{y}\) and \(\vect{p}\) be primal and dual feasible solutions
+respectively with the duality gap satisfying
+\(\vect{c}^{T}\vect{y}-\vect{b}^{T}\vect{p}<\varepsilon\). Then, \(\vect{y}\) and \(\vect{p}\) are
+\defn{\(\varepsilon\)-optimal} for the primal and dual respectively, i.e.,
+their objective function values are within the distance of \(\varepsilon\) from
+the respective optimal values:
+\begin{align*}
+\vect{c}^{T}\vect{y}&\le \vect{c}^{T}\vect{y}<\vect{c}^{T}\vect{y}^{*}+\varepsilon, \\
+\vect{b}^{T}\vect{p}^{*}-\varepsilon&<\vect{b}^{T}\vect{p}\le\vect{b}^{T}\vect{p}^{*},
+\end{align*}
+where \(\vect{y}^{*}\) and \(\vect{p}^{*}\) are optimal solutions for the
+primal and dual respectively.
+\end{proposition}
+\begin{pf}
+Since \(\vect{y}\) is primal feasible and \(\vect{y}^{*}\) is primal optimal,
+we have \(\vect{c}^{T}\vect{y}^{*}\le\vect{c}^{T}\vect{y}\) by definition.
+Also, we have \(\vect{b}^{T}\vect{p}\le\vect{c}^{T}\vect{y}\) by weak duality
+and \(\vect{c}^{T}\vect{y}-\vect{b}^{T}\vect{p}<\varepsilon\) by assumption,
+thus \(\vect{c}^{T}\vect{y}<\vect{b}^{T}\vect{p}+\varepsilon
+\le\vect{c}^{T}\vect{y}+\varepsilon\). With a similar argument, one can show that
+\(\vect{b}^{T}\vect{p}^{*}-\varepsilon<\vect{b}^{T}\vect{p}\le\vect{b}^{T}\vect{p}^{*}\).
+\end{pf}
+\item \textbf{Steps in the affine scaling algorithm.} We now have enough ingredients to
+describe the \defn{affine scaling algorithm} as follows.
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(inputs)} Specify the following inputs:
+\begin{enumerate}
+\item data of the standard form LP problem: \(A\), \(\vect{b}\), and \(\vect{c}\)
+\item an initial interior point \(x_0\) of the feasible region \(P\)
+\item the optimality tolerance \(\varepsilon>0\)
+\item parameter \(\beta\in (0,1)\)
+\end{enumerate}
+\item \emph{(initialization)} Set \(k\leftarrow 0\).
+\item \emph{(getting estimated dual basic solutions and reduced costs)} Based
+on \(\vect{x}^{k}=(x_1^{k},\dotsc,x_n^{k})\), set:
+\begin{itemize}
+\item \(X_k\leftarrow\diag{x_1^{k},\dotsc,x_n^{k}}\)
+\item \(\vect{p}^{k}\leftarrow (AX_k^{2}A^{T})^{-1}AX_{k}^{2}\vect{c}\)
+\item \(\vect{r}^{k}\leftarrow \vect{c}-A^{T}\vect{p}^{k}\)
+\end{itemize}
+\item \emph{(optimality check)} If \(\vect{r}^{k}\ge\vect{0}\) and
+\((\vect{x}^{k})^{T}\vect{r}^{k}<\varepsilon\), then stop and conclude that
+\(\vect{x}^{k}\) and \(\vect{p}^{k}\) are \(\varepsilon\)-optimal for the
+primal and dual respectively.
+\item \emph{(unboundedness check)} If \(-X_k^{2}\vect{r}^{k}\ge\vect{0}\), then
+stop and conclude that the optimal value is \(-\infty\).
+\begin{note}
+This corresponds to the case where \(\vect{d}^{*}\ge\vect{0}\) in
+\Cref{prp:min-ellip-closed-form}.
+\end{note}
+\item \emph{(moving to another point in the interior and repeating prior steps)}
+Set \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}-\beta
+X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\) and then repeat (3)-(5) but with
+\(k\leftarrow k+1\).
+\end{enumerate}
+\item \textbf{Step size for the affine scaling algorithm.} For computational
+efficiency, an important quantity to be determined for the affine scaling
+algorithm is its step size. In each iteration, we move to from an interior
+point to another by the formula \(\vect{x}^{k+1}=\vect{x}^{k}-\beta
+X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\). One clear factor that influences the
+size of the movement (\emph{step size}) is the value of \(\beta\). The larger the
+\(\beta\) (while being between \(0\) and \(1\)), the larger the step size;
+larger step size signifies more efficient progress and thus is often preferred.
+Geometrically, this phenomenon occurs because increasing the value of \(\beta\)
+would enlarge the ellipsoids formed for the iterations, and hence further
+movements can be obtained:
+\begin{center}
+\begin{tikzpicture}
+\draw[blue] (0,3) -- (2,4)  -- (5,2) -- (3,0) -- (1,0.5) -- cycle;
+\draw[dashed, violet] (-1.5,\fpeval{3-2.25}) -- (1.5,\fpeval{3+2.25});
+\draw[-Latex, violet] (1,4.5) --node[midway, above]{\(\vect{c}\)} (1.75,4);
+\draw[magenta, fill] (0,3) circle [radius=0.7mm];
+\node[magenta] () at (0,3.3) {\(\vect{x}^{*}\)};
+\draw[ForestGreen] (2.5,1.8) ellipse [x radius=0.5cm, y radius=0.75cm];
+\draw[black, fill] (2.5,1.8) circle [radius=0.7mm];
+\draw[black, fill] (2.15,2.35) circle [radius=0.7mm];
+\draw[->, thick, orange] (2.5,1.8) -- (2.15,2.35);
+\node[] () at (2.5,1.5) {\(\vect{x}^{0}\)};
+\node[] () at (1.9,2.35) {\(\vect{x}^{1}\)};
+\draw[dashed, violet, opacity=0.4] (\fpeval{2.5-1.5},\fpeval{1.8-2.25}) -- (\fpeval{2.5+1.5},\fpeval{1.8+2.25});
+\draw[dashed, violet, opacity=0.4] (\fpeval{2.15-1.5},\fpeval{2.35-2.25}) -- (\fpeval{2.15+1.5},\fpeval{2.35+2.25});
+\node[blue] () at (3,4) {\(P\)};
+\node[] () at (2.5,-1) {Smaller \(\beta\)};
+\end{tikzpicture}
+\begin{tikzpicture}
+\draw[blue] (0,3) -- (2,4)  -- (5,2) -- (3,0) -- (1,0.5) -- cycle;
+\draw[dashed, violet] (-1.5,\fpeval{3-2.25}) -- (1.5,\fpeval{3+2.25});
+\draw[-Latex, violet] (1,4.5) --node[midway, above]{\(\vect{c}\)} (1.75,4);
+\draw[magenta, fill] (0,3) circle [radius=0.7mm];
+\node[magenta] () at (0,3.3) {\(\vect{x}^{*}\)};
+\draw[ForestGreen] (2.5,1.8) ellipse [x radius=0.8cm, y radius=1.2cm];
+\draw[black, fill] (2.5,1.8) circle [radius=0.7mm];
+\draw[black, fill] (1.95,2.7) circle [radius=0.7mm];
+\draw[->, thick, orange] (2.5,1.8) -- (1.95,2.7);
+\node[] () at (2.5,1.5) {\(\vect{x}^{0}\)};
+\node[] () at (1.8,2.8) {\(\vect{x}^{1}\)};
+\draw[dashed, violet, opacity=0.4] (\fpeval{2.5-1.5},\fpeval{1.8-2.25}) -- (\fpeval{2.5+1.5},\fpeval{1.8+2.25});
+\draw[dashed, violet, opacity=0.4] (\fpeval{1.95-1.5},\fpeval{2.7-2.25}) -- (\fpeval{1.95+1.5},\fpeval{2.7+2.25});
+\node[blue] () at (3,4) {\(P\)};
+\node[] () at (2.5,-1) {Larger \(\beta\)};
+\end{tikzpicture}
+\end{center}
+Another factor that influences the step size is the way we choose to move
+between interior points.  From the pictures above, it appears that we can
+indeed move \emph{beyond} the ellipsoid without exiting the interior, which can result
+in an even larger step size. But to do that, we would need to change the way we
+move between interior points, which leads to the discussion of \emph{long-step
+variants} of the affine scaling algorithm.
+\item \textbf{Long-step variants.} When we choose to move between interior
+points according to \(\vect{x}^{k+1}=\vect{x}^{k}-\beta
+X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\) in the affine scaling algorithm, this
+version of algorithm is said to be \defn{short-step}; as we shall see, the step
+sizes for this kind of movement would be relatively small, hence the name
+``short-step''. To get long-step variants, we modify the formula above by
+replacing the Euclidean norm \(\|\cdot\|\) by another function that gives
+smaller values. For every \(\vect{u}\in\R^{n}\), the \defn{maximum norm} (or
+\defn{\(\infty\)-norm}) of \(\vect{u}\) is
+\(\|\vect{u}\|_{\infty}=\max\{|u_i|:i=1,\dotsc,n\}\). It satisfies the property
+that \(\|\vect{u}\|_{\infty}\le\|\vect{u}\|\) since we have
+\(|u_i|=\sqrt{u_i^{2}}\le\sqrt{u_1^{2}+\dotsb+u_n^{2}}=\|\vect{u}\|\) for all
+\(i=1,\dotsc,n\). So, by changing the Euclidean norm \(\|\cdot\|\) to the
+maximum norm \(\|\cdot\|_{\infty}\) in the formula, we can have longer steps.
+The only thing left to show is that the formula would still lead to a movement
+to an \emph{interior point} and would not “overshoot”.  This is assured by the
+following result.
+\begin{proposition}
+\label{prp:max-norm-movement-interior}
+Let \(\vect{x}^{k}\) be an interior point of the feasible region \(P\), and let
+\(X_k\), \(\vect{r}^{k}\), and \(\beta\) be as defined in the affine scaling
+algorithm. Then \(\vect{x}^{k+1}=\vect{x}^{k}-\beta
+X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\) is an interior point of \(P\).
+\end{proposition}
+\begin{pf}
+Since \(X_k^{-1}(\vect{x}^{k+1}-\vect{x}^{k})=-\beta
+X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|_{\infty}\), we have
+\[
+\max\left\{\frac{|x_i^{k+1}-x_i^{k}|}{x_i^{k}}:i=1,\dotsc,n\right\}
+=\|X_k^{-1}(\vect{x}^{k+1}-\vect{x}^{k})\|_{\infty}
+=\beta\frac{\|X_k\vect{r}^{k}\|_{\infty}}{\|X_k\vect{r}^{k}\|_{\infty}}
+=\beta.
+\]
+So, for all \(i=1,\dotsc,n\), we have \(|x_i^{k+1}-x_i^{k}|/x_i^{k}\le\beta<1\),
+which implies that \(x_i^{k}-x_{i}^{k+1}<x_i^{k}\), and hence \(x_i^{k+1}>0\).
+
+Furthermore, similar to the feasibility part of the proof of
+\Cref{prp:min-ellip-closed-form}, we have \(AX_k^{2}(\vect{c}-A^{T}\vc{\vect{p}^{k}})
+=AX_{k}^{2}(\vect{c}-A^{T}\vc{(AX_k^{2}A^{T})^{-1}AX_{k}^{2}\vect{c}})
+=AX_{k}^{2}\vect{c}-AX_{k}^{2}A^{T}(AX_k^{2}A^{T})^{-1}AX_{k}\vect{c}=\vect{0}\),
+which implies that \(A\vect{x}^{k+1}=A\vect{x}^{k}+\vect{0}=\vect{b}\). Hence,
+\(\vect{x}^{k+1}\) is an interior point of \(P\).
+\end{pf}
+
+Using the maximum norm instead of the Euclidean norm is a long-step variant,
+but it is not the only one. Another more popular long-step variant is to
+replace the Euclidean norm \(\|\cdot\|\) by the function \(\gamma\) given by
+\(\gamma(\vect{u})=\max\{u_i:u_i>0\}\) for all \(\vect{u}\in\R^{n}\) . Noting
+that
+\(\gamma(\vect{u})=\max\{u_i:u_i>0\}\le\max\{|u_i|:i=1,\dotsc,n\}=\|\vect{u}\|_{\infty}\),
+this long-step variant can lead to a larger step size, explaining why it is
+more popular. We can also establish a result analogous to
+\Cref{prp:max-norm-movement-interior} for this long-step variant using a
+similar argument.
+\end{enumerate}

@@ -125,7 +125,7 @@ polynomial time. It serves as the building block for algorithms that
 \item\label{it:ellip-method-geo} \textbf{Geometry of the ellipsoid method.} We start by introducing
 geometric concepts related to the ellipsoid method:
 \begin{itemize}
-\item \(E\subseteq \R^n\) is an \defn{ellipsoid} if it can be expressed as
+\item \(E\subseteq \R^n\) is an \defn{ellipsoid} (centered at \(\vect{z}\)) if it can be expressed as
 \(E=E(\vect{z},D):=\{\vect{x}\in\R^n:(\vect{x}-\vect{z})^{T}D^{-1}(\vect{x}-\vect{z})\le 1\}\)
 where \(\vect{z}\in\R^n\) and \(D\in\R^{n\times n}\) is positive definite.
 \begin{center}
@@ -468,7 +468,7 @@ have \(v\le \vol{P}\le V\).
 Knowing \(\vect{x}_0\), \(r\), \(v\), and \(V\), the ellipsoid method can then
 be implemented as follows.
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(initialization)} Inputs:
+\item \emph{(initialization)}
 \begin{itemize}
 \item \(t^{*}\leftarrow\lceil 2(n+1)\ln(V/v)\rceil\).
 \item \(E_0\leftarrow E(\vect{x}_0,r^{2}I)\).
