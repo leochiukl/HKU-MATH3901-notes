@@ -10,11 +10,11 @@ point methods serve as viable alternatives to the simplex method, and often
 outperforms the simplex method for ``large'' LP problems, due to the theoretical
 guarantee on the computational efficiency (running in polynomial time).
 
-In \Cref{sect:int-pt-methods}, we will study three common kinds of interior point methods,
-namely (i) the \emph{affine scaling algorithm}, (ii) the \emph{potential reduction}
-algorithm, and (iii) \emph{path following algorithms}. Among the three types of
-interior point methods, the affine scaling algorithm should be the simplest
-one, so we first study this algorithm.
+In \Cref{sect:int-pt-methods}, we will study three common kinds of interior
+point methods, namely (i) the \emph{affine scaling algorithm}, (ii) the
+\emph{potential reduction algorithm}, and (iii) the \emph{primal path following
+algorithm}. Among the three types of interior point methods, the affine
+scaling algorithm should be the simplest one, so we first study this algorithm.
 \end{enumerate}
 \subsection{The Affine Scaling Algorithm}
 \begin{enumerate}
@@ -27,12 +27,12 @@ one, so we first study this algorithm.
 and its dual
 \begin{align*}
 \text{max}\quad&\vect{b}^{T}\vect{p} \\
-\text{s.t.}\quad&A^{T}\vect{p}=\vect{c} \\
+\text{s.t.}\quad&A^{T}\vect{p}\le\vect{c} \\
 \end{align*}
 where \(A\in\R^{m\times n}\) and \(\vect{b}\in\R^{m}\). Let
 \(P=\{\vect{x}\in\R^n:A\vect{x}=\vect{b},\vect{x}\ge\vect{0}\}\) denote the
 feasible region for the primal problem. The \defn{interior} (or \defn{relative
-interior}) of P is given by \(\{\vect{x}\in
+interior}) of \(P\) is given by \(\{\vect{x}\in
 P:\vect{x}>\vect{0}\}\)\footnote{Here, the ``interior'' is taken with respect
 to a certain \emph{affine subspace} rather than the Euclidean space
 \(\R^{n}\).}, and its elements are called interior points. Using the property
@@ -107,10 +107,11 @@ Fix any \(\vect{x}\in S\). For every \(i=1,\dotsc,n\), we have \((x_i-y_i)^{2}\l
 and so \(x_i>0\).
 \end{pf}
 
-To see how result helps us construct such ellipsoids, consider the following.
-Fix an interior point \(\vect{y}\) of \(P\) and let \(Y=\diag{y_1,\dotsc,y_n}\)
-denote the \(n\times n\) diagonal matrix with \((i,i)\)th entry being \(y_i\) for all \(i=1,\dotsc,n\). As \(y_1,\dotsc,y_n>0\), \(Y\) is invertible, and hence we can
-express \(S\) as
+To see how this result helps us construct such ellipsoids, consider the
+following.  Fix an interior point \(\vect{y}\) of \(P\) and let
+\(Y=\diag{y_1,\dotsc,y_n}\) denote the \(n\times n\) diagonal matrix with
+\((i,i)\)th entry being \(y_i\) for all \(i=1,\dotsc,n\). As
+\(y_1,\dotsc,y_n>0\), \(Y\) is invertible, and hence we can express \(S\) as
 \[
 S=\left\{\vect{x}\in\R^{n}:\sum_{i=1}^{n}\frac{(x_i-y_i)^{2}}{y_i^{2}}\le\beta^{2}\right\}
 =\{\vect{x}\in\R^{n}:(\vect{x}-\vect{y})^{T}(Y^{-1})^{2}(\vect{x}-\vect{y})\le\beta^{2}\}
@@ -121,13 +122,13 @@ where \(\|\cdot\|\) denotes the Euclidean norm and satisfies that
 \((Y^{-1})^{2}=\diag{y_1^{-2},\dotsc,y_n^{-2}}\) is positive definite, \(S\) is
 indeed an ellipsoid centered at \(\vect{y}\). Then, \(S_0:=S\cap
 \{\vect{x}\in\R^{n}:A\vect{x}=\vect{b}\}\) would be a section of ellipsoid
-centered at y that is contained in the interior of \(P\); sometimes we also
+centered at \(\vect{y}\) that is contained in the interior of \(P\); sometimes we also
 call \(S_0\) simply as ellipsoid (with respect to \(P\)). This provides us a
 method for obtaining ellipsoids in the interior of \(P\) centered at desired
 points.
-\item \textbf{Minimization over ellipsoid.} After forming an ellipsoid \(S_0\)
-centered at y in the interior of \(P\), we would need to perform minimization
-over the ellipsoid \(S_0\) in the affine scaling algorithm:
+\item\label{it:min-over-ellip} \textbf{Minimization over ellipsoid.} After forming an ellipsoid \(S_0\)
+centered at \(\vect{y}\) in the interior of \(P\), we would need to perform
+minimization over the ellipsoid \(S_0\) in the affine scaling algorithm:
 \begin{align*}
 \text{min}\quad&\vect{c}^{T}\vect{x} \\
 \text{s.t.}\quad&A\vect{x}=\vect{b} \\
@@ -143,11 +144,11 @@ first do some preparatory work to simplify the minimization problem a bit.
 Let \(\vect{d}=\vect{x}-\vect{y}\) denote the vector of “movement”. By the
 feasibility of \(\vect{y}\), we have \(A\vect{y}=\vect{b}\). Also, by
 construction, every \(x\in S_0\) satisfies \(A\vect{x}=\vect{b}\). These imply
-that \(A\vect{d}=\vect{0}\) Now, consider the following problem that performs
+that \(A\vect{d}=\vect{0}\). Now, consider the following problem that performs
 minimization with respect to \(\vect{d}\) instead of \(\vect{x}\):
 \begin{align*}
 \text{min}\quad&\vect{c}^{T}\vect{d} \\
-\text{s.t.}\quad&A\vect{d}=\vect{b} \\
+\text{s.t.}\quad&A\vect{d}=\vect{0} \\
 &\|Y^{-1}\vect{d}\|\le\beta
 \end{align*}
 where \(\beta\in (0,1)\) and \(Y=\diag{y_1,\dotsc,y_n}\).
@@ -165,24 +166,27 @@ Suppose that the rows of \(A\) are linearly independent and \(\vect{c}\) is not
 a linear combination of the rows of \(A\). Let \(\vect{y}>\vect{0}\). Then an
 optimal solution to the problem above is
 \[
-\vect{d}^{*}=-\beta\frac{Y^{2}(\vect{c}-A^{T}\vect{p})}{\|Y(\vect{c}-A^{T}\vect{p}\|}
+\vect{d}^{*}=-\beta\frac{Y^{2}(\vect{c}-A^{T}\vect{p})}{\|Y(\vect{c}-A^{T}\vect{p})\|}
 \]
 with \(Y=\diag{y_1,\dotsc,y_n}\),
-\(\vect{p}=(AY^{2}A^{T})^{-1}AY^{2}\vect{c}\), and \(\beta\in (0.1)\).
+\(\vect{p}=(AY^{2}A^{T})^{-1}AY^{2}\vect{c}\), and \(\beta\in (0,1)\).
 Furthermore, \(\vect{x}^{*}=\vect{y}+\vect{d}^{*}\) is an interior point of
-\(P\) and satisfies that \(\vect{c}^{T}\vect{x}^{*}<\vect{c}^{T}\vect{y}\)
-\emph{(being in interior and decrease in objective function value after the
-move)}.
+\(P\) and satisfies that \(\vect{c}^{T}\vect{x}^{*}=\vect{c}^{T}\vect{y}
+-\beta\|Y(\vect{c}-A^{T}\vect{p})\|<\vect{c}^{T}\vect{y}\) \emph{(being in interior and
+leading to decrease in objective function value after the move)}.
 \end{proposition}
 \begin{pf}
 \textbf{Showing that \(\vect{d}^{*}\) and \(\vect{p}\) are well-defined.} First
 of all, we will show the well-definedness of \(\vect{d}^{*}\) and \(\vect{p}\)
-by showing that \(\|Y(\vect{c}-A^{T}\vect{p}\|\ne\vect{0}\) and \(AY^{2}A^{T}\)
-is invertible respectively. For the former, it follows from the assumption that
-\(\vect{c}\) is not a linear combination of the rows of \(A\), which implies that \(\vect{c}-A^{T}\vect{p}\ne\vect{0}\). For the latter, consider the following. Since the rows of \(A\) are linearly
-independent, from linear algebra we know that \(A\) and \(A^{T}\) are both invertible.
-Also, since \(\vect{y}>\vect{0}\), we know \(y_1^{2},\dotsc,y_n^{2}>0\), and so
-\(Y^{2}\) is invertible. Therefore, \(AY^{2}A^{T}\) is invertible.
+by showing that \(\|Y(\vect{c}-A^{T}\vect{p})\|> 0\) and \(AY^{2}A^{T}\) is
+invertible respectively. For the former, it follows from the assumption that
+\(\vect{c}\) is not a linear combination of the rows of \(A\), which implies
+that \(\vect{c}-A^{T}\vect{p}\ne\vect{0}\), and hence
+\(Y(\vect{c}-A^{T}\vect{p})\ne\vect{0}\). For the latter, consider the
+following. Since the rows of \(A\) are linearly independent, from linear
+algebra we know that \(A\) and \(A^{T}\) are both invertible.  Also, since
+\(\vect{y}>\vect{0}\), we know \(y_1^{2},\dotsc,y_n^{2}>0\), and so \(Y^{2}\)
+is invertible. Therefore, \(AY^{2}A^{T}\) is invertible.
 
 \textbf{Showing the feasibility of \(\vect{d}^{*}\).} Since \(\vect{y}>0\), we
 know \(Y\) is invertible, thus
@@ -206,7 +210,7 @@ and so
 {\overset{\text{(Cauchy-Swartz)}}{\ge}}-\|\vc{Y(\vect{c}-A^{T}\vect{p})}\|\|\orc{Y^{-1}\vect{d}}\| \\
 &\ge\mgc{-\orc{\beta}\|Y(\vect{c}-A^{T}\vect{p})\|}\overset{(\vect{v}^{T}\vect{v}=\|\vect{v}\|^{2})}{=}
 -\beta\frac{[Y(\vect{c}-A^{T}\vect{p})]^{T}[Y(\vect{c}-A^{T}\vect{p})]}{\|Y(\vect{c}-A^{T}\vect{p})\|} \\
-&=-(\vect{c}^{T}-\vect{p}^{T}A)\beta\frac{Y^{2}(\vect{c}-A^{T}\beta)}{\|\vect{Y}(\vect{c}-A^{T}\vect{p}\|}
+&=-(\vect{c}^{T}-\vect{p}^{T}A)\beta\frac{Y^{2}(\vect{c}-A^{T}\beta)}{\|\vect{Y}(\vect{c}-A^{T}\vect{p})\|}
 =(\vect{c}^{T}-\vect{p}^{T}A)\vect{d}^{*}\overset{(A\vect{d}^{*}=\vect{0})}{=}
 \mgc{\vect{c}^{T}\vect{d}^{*}},
 \end{align*}
@@ -240,9 +244,9 @@ A\vect{d}^{*}=\vect{b}\) for all \(\alpha>0\). By
 \Cref{prp:min-ellip-closed-form}, we know that
 \(\vect{c}^{T}\vect{d}^{*}=\vect{c}^{T}\vect{x}^{*}-\vect{c}^{T}\vect{y}<0\),
 and hence the objective function value in the original minimization problem can
-get arbitrarily negative as we increase \(\alpha\).
+get arbitrarily negative on the feasible region as we increase \(\alpha\).
 \end{remark}
-\item \textbf{Interpreting the vector p as estimate for dual basic solution.}
+\item \textbf{Interpreting the vector \(\vect{p}\) as estimate for dual basic solution.}
 In \Cref{prp:min-ellip-closed-form}, we have a rather complicated expression
 for the vector \(\vect{p}\), but it actually carries a somewhat intuitive
 interpretation, and can be viewed as a kind of “estimate” of dual basic
@@ -251,7 +255,8 @@ solution. To see this, we consider the case where the vector \(\vect{y}\) in
 WLOG, we assume that the first \(m\) variables in \(\vect{y}\) are basic, so we
 can write \(\vect{y}=(y_1,\dotsc,y_m,0,\dotsc,0)\), and hence \(Y=\diag{y_1,\dotsc,y_m,0,\dotsc,0}\).
 Let \(Y_0:=\diag{y_1,\dotsc,y_m}\). Then we have
-\(AY=\begin{bmatrix}BY_0&\vect{0}\end{bmatrix}\in\R^{m\times n}\) where \(B^{m\times m}\)
+\(AY=\begin{bmatrix}BY_0&\vect{0}\end{bmatrix}\in\R^{m\times n}\) where
+\(B\in\R^{m\times m}\)
 is the corresponding basis matrix. Therefore, we can write
 \begin{align*}
 \vect{p}&=(AY^{2}A^{T})^{-1}AY^{2}\vect{c}=(AY(AY)^{T})^{-1}AYY\vect{c}
@@ -264,8 +269,8 @@ for the basic variables. Note that the final expression is the same as the
 associated dual basic solution \(\vect{y}_{B}\).
 
 But of course, the vector \(\vect{y}\) in \Cref{prp:min-ellip-closed-form}
-would generally \emph{not} a nondegenerate basic feasible solution, and so the
-vector \(\vect{p}\) would \emph{not} be a dual basic solution exactly.
+would generally \emph{not} be a nondegenerate basic feasible solution, and so
+the vector \(\vect{p}\) would \emph{not} be a dual basic solution exactly.
 However, heuristically, we may treat \(\vect{p}\) as an “estimate” for dual
 basic solution.
 
@@ -327,29 +332,32 @@ thus \(\vect{c}^{T}\vect{y}<\vect{b}^{T}\vect{p}+\varepsilon
 \le\vect{c}^{T}\vect{y}+\varepsilon\). With a similar argument, one can show that
 \(\vect{b}^{T}\vect{p}^{*}-\varepsilon<\vect{b}^{T}\vect{p}\le\vect{b}^{T}\vect{p}^{*}\).
 \end{pf}
-\item \textbf{Steps in the affine scaling algorithm.} We now have enough ingredients to
-describe the \defn{affine scaling algorithm} as follows.
+\item\label{it:affine-scal-steps} \textbf{Steps in the affine scaling
+algorithm.} We now have enough ingredients to describe the \defn{affine scaling
+algorithm} as follows.
 \begin{enumerate}[label={(\arabic*)}]
 \item \emph{(inputs)} Specify the following inputs:
 \begin{enumerate}
-\item data of the standard form LP problem: \(A\), \(\vect{b}\), and \(\vect{c}\)
-\item an initial interior point \(x_0\) of the feasible region \(P\)
+\item data of the standard form LP problem: \(A\), \(\vect{b}\), and
+\(\vect{c}\), where we assume that the rows of \(A\) are linearly independent
+and \(\vect{c}\) is not a linear combination of the rows of \(A\)
+\item an initial interior point \(\vect{x}^0\) of the feasible region \(P\)
 \item the optimality tolerance \(\varepsilon>0\)
 \item parameter \(\beta\in (0,1)\)
 \end{enumerate}
-\item \emph{(initialization)} Set \(k\leftarrow 0\).
-\item \emph{(getting estimated dual basic solutions and reduced costs)} Based
+\item \emph{(Initialization)} Set \(k\leftarrow 0\).
+\item \emph{(Computing estimated dual basic solution and reduced cost)} Based
 on \(\vect{x}^{k}=(x_1^{k},\dotsc,x_n^{k})\), set:
 \begin{itemize}
 \item \(X_k\leftarrow\diag{x_1^{k},\dotsc,x_n^{k}}\)
 \item \(\vect{p}^{k}\leftarrow (AX_k^{2}A^{T})^{-1}AX_{k}^{2}\vect{c}\)
 \item \(\vect{r}^{k}\leftarrow \vect{c}-A^{T}\vect{p}^{k}\)
 \end{itemize}
-\item \emph{(optimality check)} If \(\vect{r}^{k}\ge\vect{0}\) and
+\item \emph{(Optimality check)} If \(\vect{r}^{k}\ge\vect{0}\) and
 \((\vect{x}^{k})^{T}\vect{r}^{k}<\varepsilon\), then stop and conclude that
 \(\vect{x}^{k}\) and \(\vect{p}^{k}\) are \(\varepsilon\)-optimal for the
 primal and dual respectively.
-\item \emph{(unboundedness check)} If \(-X_k^{2}\vect{r}^{k}\ge\vect{0}\), then
+\item \emph{(Unboundedness check)} If \(-X_k^{2}\vect{r}^{k}\ge\vect{0}\), then
 stop and conclude that the optimal value is \(-\infty\).
 \begin{note}
 This corresponds to the case where \(\vect{d}^{*}\ge\vect{0}\) in
@@ -359,6 +367,18 @@ This corresponds to the case where \(\vect{d}^{*}\ge\vect{0}\) in
 Set \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}-\beta
 X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\) and then repeat (3)-(5) but with
 \(k\leftarrow k+1\).
+
+\begin{note}
+The point \(\vect{x}^{k+1}\) is an optimal solution to the following
+minimization problem:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\|\vc{X_k}^{-1}(\vect{x}-\vc{\vect{x}^{k}})\|\le\beta
+\end{align*}
+Here the feasible region is a section of ellipsoid centered at \(\vect{x}^{k}\)
+that is contained in the interior of \(P\).
+\end{note}
 \end{enumerate}
 \item \textbf{Step size for the affine scaling algorithm.} For computational
 efficiency, an important quantity to be determined for the affine scaling
@@ -435,7 +455,7 @@ following result.
 Let \(\vect{x}^{k}\) be an interior point of the feasible region \(P\), and let
 \(X_k\), \(\vect{r}^{k}\), and \(\beta\) be as defined in the affine scaling
 algorithm. Then \(\vect{x}^{k+1}=\vect{x}^{k}-\beta
-X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\) is an interior point of \(P\).
+X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|_{\infty}\) is an interior point of \(P\).
 \end{proposition}
 \begin{pf}
 Since \(X_k^{-1}(\vect{x}^{k+1}-\vect{x}^{k})=-\beta
@@ -460,11 +480,674 @@ which implies that \(A\vect{x}^{k+1}=A\vect{x}^{k}+\vect{0}=\vect{b}\). Hence,
 Using the maximum norm instead of the Euclidean norm is a long-step variant,
 but it is not the only one. Another more popular long-step variant is to
 replace the Euclidean norm \(\|\cdot\|\) by the function \(\gamma\) given by
-\(\gamma(\vect{u})=\max\{u_i:u_i>0\}\) for all \(\vect{u}\in\R^{n}\) . Noting
-that
-\(\gamma(\vect{u})=\max\{u_i:u_i>0\}\le\max\{|u_i|:i=1,\dotsc,n\}=\|\vect{u}\|_{\infty}\),
-this long-step variant can lead to a larger step size, explaining why it is
-more popular. We can also establish a result analogous to
-\Cref{prp:max-norm-movement-interior} for this long-step variant using a
-similar argument.
+\(\gamma(\vect{u})=\max\{u_i:u_i>0\}\) for all \(\vect{u}\in\R^{n}\). Noting
+that \(\gamma(\vect{u})=\max\{u_i:u_i>0\}\le\max\{|u_i|:i=1,\dotsc,n\}
+=\|\vect{u}\|_{\infty}\), this long-step variant can lead to a larger step
+size, explaining why it is more popular. We can also establish a result
+analogous to \Cref{prp:max-norm-movement-interior} for this long-step variant
+using a similar argument.
+\item \textbf{Convergence.} Based on our intuitive geometrical understanding,
+the affine scaling algorithm seems to allow us to get ``very close'' to the
+optimal solution after many iterations, since at each iteration we should be
+``closer'' to the optimal solution. This intuition is theoretically justified
+by the following result, under some regularity assumptions.
+
+\begin{theorem}
+\label{thm:affine-scal-conv}
+Assume that:
+\begin{enumerate}
+\item The matrix \(A\) has linearly independent rows.
+\item The vector \(\vect{c}\) is not a linear combination of the rows of \(A\).
+\item There exists an optimal solution.
+\item There exists an interior point of the feasible region.
+\end{enumerate}
+If we apply the long-step affine scaling algorithm with \(\varepsilon=0\),
+the function \(\gamma\), and \(0<\beta<2/3\), then the sequences
+\(\{\vect{x}^{k}\}\) and \(\{\vect{p}^{k}\}\) converge to some primal and dual
+optimal solutions respectively.
+
+\begin{note}
+More precisely, setting ``\(\varepsilon=0\)'' means that for the optimality check
+in \labelcref{it:affine-scal-steps}, we require \((\vect{x}^{k})\vect{r}^{k}=0\)
+\emph{(exact optimality)}.
+\end{note}
+\end{theorem}
+\begin{pf}
+Omitted.
+\end{pf}
+\item \textbf{Initialization.} Apart from the theoretical guarantee on the
+convergence, another important consideration in the implementation of affine
+scaling algorithm is \emph{initialization}. Recall from
+\labelcref{it:affine-scal-steps} that we need to start with an initial interior
+point \(\vect{x}^{0}\) of the feasible region in the affine scaling algorithm.
+Previously, for the simplex method, one way to
+handle the initialization is to use the big-\(M\) method
+(\labelcref{it:big-m-method}). Here, we apply a similar idea to find an initial
+interior point.
+
+Our original problem is the usual standard form LP problem:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+Then, consider the following LP problem that is modified from the original,
+with a new variable \(x_{n+1}\) added:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x}\vc{+Mx_{n+1}} \\
+\text{s.t.}\quad&A\vect{x}\vc{+(\vect{b}-A\vect{1})x_{n+1}}=\vect{b} \\
+&\vect{x}\ge \vect{0}, x_{n+1}\ge 0,
+\end{align*}
+where \(M>0\) is a ``large'' constant. For this modified problem, we can see
+that \((\vect{x},x_{n+1})=(\vect{1},1)>\vect{0}\) is an interior point of the
+feasible region, since we have \(A\vect{1}+(\vect{b}-A\vect{1})(1)=\vect{b}\).
+
+Like the big-\(M\) method, as long as the original problem has an optimal
+solution and \(M\) is sufficiently large, the optimal solution to this
+modified problem would always satisfy \(x_{n+1}=0\), yielding an optimal
+solution to the original problem.
+
+\begin{proposition}
+\label{prp:affine-scal-big-m}
+If the original problem has an optimal solution, then every optimal solution
+of the modified problem satisfies \(x_{n+1}=0\), provided that \(M\) is
+sufficiently large.
+\end{proposition}
+\begin{pf}
+Omitted.
+\end{pf}
+\item \textbf{Computational performance.} An important practical aspect about
+the affine scaling algorithm is its \emph{computational performance}.  While
+the affine scaling algorithm is observed to have good performance in practice,
+whether the affine scaling algorithm runs in polynomial time remains an open
+question. However, we can make the following observations:
+\begin{enumerate}
+\item \emph{(Behaviour when initializing near a vertex)}
+When the affine scaling algorithm is initialized near a vertex, it has a
+similar behaviour as the simplex method in the sense that it also travels near
+the ``edge'' of the feasible region. In view of this, the answer to the open
+question may be more likely to be negative, as we know that the simplex method
+does not run in polynomial time.
+\item\label{it:more-prog-far-from-bound} \emph{(More progress when being far
+from boundary)} It is also observed that the affine scaling algorithm moves in
+larger steps and makes more progress when the position is far from the boundary
+of the feasible region (lying ``deep'' inside the feasible region). This can be
+explained by noting that larger ellipsoids can be formed when the center is far
+from boundary, thereby resulting in larger steps.
+\end{enumerate}
+\end{enumerate}
+\subsection{Potential Reduction Algorithm}
+\begin{enumerate}
+\item \textbf{Idea.} Inspired by the observation in
+\labelcref{it:more-prog-far-from-bound}, we would like to design an algorithm
+that allow the iterates to get closer to the optimal solution, while making
+them far from the boundary, so that more progress can be made in the
+movements generally.
+
+More specifically, consider the following standard form LP
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+and its dual (with a vector \(\vect{s}\) of slack variables added)
+\begin{align*}
+\text{max}\quad&\vect{b}^{T}\vect{p} \\
+\text{s.t.}\quad&A^{T}\vect{p}+\vect{s}=\vect{c} \\
+&\vect{s}\ge\vect{0}
+\end{align*}
+Then, we want to achieve the following two goals in the algorithm:
+\begin{enumerate}
+\item Minimize the objective function value \(\vect{c}^{T}\vect{x}\) in the
+standard form LP problem.
+\item Keep the iterates far from boundary.
+\end{enumerate}
+However, these two goals are indeed conflicting, since being away from boundary
+generally limits the extent of the reduction in the objective function value.
+Nevertheless, these two goals can still be incorporated simultaneously using
+the following \emph{potential function}:
+\[
+G(\vect{x},\vect{s})=q\ln (\vect{s}^{T}\vect{x})-\sum_{j=1}^{n}\ln x_j
+-\sum_{j=1}^{n}\ln s_j
+\]
+where \(q>n\) is a constant. This leads to the \emph{potential reduction
+algorithm}, which \underline{reduces} the \underline{potential} function during
+the iterations. Through minimizing the potential function
+\(G(\vect{x},\vect{s})\) rather than the original objective function
+\(\vect{c}^{T}\vect{x}\), the iterates would still move towards an
+optimal solution, but along a trajectory that is relatively far from the
+boundary.
+\item \textbf{Interpretation of potential function.} To better understand the
+potential function, we can consider the following two parts separately:
+\begin{itemize}
+\item \(q\ln(\vect{s}^{T}\vect{x})\): This is related to the duality gap, by
+noting that
+\[
+\vect{s}^{T}\vect{x}=(\vect{c}-A^{T}\vect{p})^{T}\vect{x}
+=\vect{c}^{T}\vect{x}-\vect{p}^{T}\underbrace{\vect{A}\vect{x}}_{\vect{b}}
+=\underbrace{\vect{c}^{T}\vect{x}-\vect{b}^{T}\vect{p}}_{\text{duality gap}}
+\]
+for all primal and dual feasible solutions \(\vect{x}\) and
+\((\vect{p},\vect{s})\) respectively.
+\item \(-\sum_{j=1}^{n}\ln x_j-\sum_{j=1}^{n}\ln s_j\): This expression would
+become very positive if the primal or dual solution gets close to the boundary,
+thereby \emph{penalizing} the closedness to the boundary.
+\end{itemize}
+Therefore, the potential function comprises of a term that capture the
+closedness to optimality (through the duality gap), and a penalty term for the
+closedness to the boundary. The logarithms in the penalty term amplify
+the penalties when the solutions are \emph{extremely} close to the boundary,
+and correspondingly the logarithm is added to the first term for
+balancing the effects from the two sources.
+\item \textbf{A lower bound on the potential function.} Now, we start
+discussing how the potential function can help us to find an optimal solution.
+The following preliminary result provides a lower bound on the potential
+function, which is utilized for justifying the potential reduction theorem.
+\begin{lemma}
+\label{lma:poten-fn-lb}
+For all \(\vect{x}>\vect{0}\) and \(\vect{s}>\vect{0}\), we have
+\[
+G(\vect{x},\vect{s})\ge n\ln n+(q-n)\ln(\vect{s}^{T}\vect{x})
+\]
+\end{lemma}
+\begin{pf}
+We first write
+\[
+G(\vect{x},\vect{s})=q\ln(\vect{s}^{T}\vect{x})
+-\sum_{j=1}^{n}\ln x_j-\sum_{j=1}^{n}\ln s_j
+=(q-n)\ln(\vect{s}^{T}\vect{x})
++n\ln(\vect{s}^{T}\vect{x})-\sum_{j=1}^{n}\ln x_j
+-\sum_{j=1}^{n}\ln s_j.
+\]
+It then remains to show that \(n\ln(\vect{s}^{T}\vect{x})-\sum_{j=1}^{n}\ln x_j
+-\sum_{j=1}^{n}\ln s_j\ge n\ln n\). To show this, we use the AM-GM inequality
+as follows:
+\begin{align*}
+n\ln(\vect{s}^{T}\vect{x})-\sum_{j=1}^{n}\ln x_j -\sum_{j=1}^{n}\ln s_j
+&=n\ln(\vect{s}^{T}\vect{x})-\ln\left(\prod_{j=1}^{n}x_j\right)
+-\ln\left(\prod_{j=1}^{n}s_j\right) \\
+&=\ln\underbrace{\left(\sum_{j=1}^{n}x_js_j\right)^{n}}
+_{\mathclap{\underset{\text{(AM-GM)}}{\ge}n^{n}\prod_{j=1}^{n}x_js_j}}
+-\ln\left(\prod_{j=1}^{n}x_js_{j}\right) \\
+&\ge \ln\left(n^{n}\prod_{j=1}^{n}x_js_j/\prod_{j=1}^{n}x_js_j\right)
+=\ln n^{n}=n\ln n.
+\end{align*}
+\end{pf}
+
+\begin{note}
+This result informs us that when the potential function
+\(G(\vect{x},\vect{s})\) takes small values, the duality gap
+\(\vect{s}^{T}\vect{x}\) would also be small. This gives us some idea on why
+minimizing the potential function can lead to optimal solution still.
+\end{note}
+\item \textbf{Getting \(\varepsilon\)-optimal solutions by reducing potential
+function iteratively.}
+The following result provides a theoretical guarantee that, as long as we can
+reduce the potential function by a sufficiently large amount in each iteration,
+\(\varepsilon\)-optimal solutions for both the primal and dual problems can be
+obtained after finitely many iterations; indeed, the result below provides an
+explicit formula for the upper bound on the number of iterations needed. It
+serves as the foundation for the potential reduction algorithm.
+
+\begin{theorem}
+\label{thm:poten-redu-iter-num}
+Let \(\vect{x}^{0}\) and \((\vect{p}^{0},\vect{s}^{0})\) be primal and dual
+feasible solutions respectively, with \(\vect{x}^{0}>\vect{0}\) and
+\(\vect{s}^{0}>\vect{0}\). Let \(\varepsilon>0\) be the optimal tolerance.
+Then, every algorithm that (i) maintains both the primal and dual feasibility
+and (ii) reduces the potential function \(G(\vect{x},\vect{s})\) by at least a
+fixed constant \(\delta>0\), in each iteration, results in solutions
+\(\vect{x}^{K}\) and \((\vect{p}^{K},\vect{s}^{K})\) for both the primal and
+dual problems having the duality gap
+\((\vect{s}^{K})^{T}\vect{x}^{K}=\vect{c}^{T}\vect{x}^{K}
+-\vect{b}^{T}\vect{p}^{K}\le\varepsilon\)\footnote{Previously, the
+\(\varepsilon\)-optimality requires ``\(<\varepsilon\)'', but here we only have
+``\(\le\varepsilon\)''. Nevertheless, we usually do not care much about this
+subtlety, and still regard such solutions as ``\(\varepsilon\)-optimal''.} after
+\[
+K=\left\lceil
+\frac{G(\vect{x}^{0},\vect{s}^{0})+(q-n)\ln(1/\varepsilon)-n\ln n}{\delta}
+\right\rceil
+\]
+iterations.
+\end{theorem}
+\begin{pf}
+By assumption the algorithm has the property that
+\(G(\vect{x}^{k+1},\vect{s}^{k+1})-G(\vect{x}^{k},\vect{s}^{k})\le -\delta\) for
+every \(k=0,1,2,\dotsc\). Hence after \(K\) iterations we have
+\(G(\vect{x}^{K},\vect{s}^{K})\le G(\vect{x}^{0},\vect{s}^{0})-K\delta\). For
+the \(K\) specified above, we then get
+\[
+n\ln n+\underbrace{(q-n)}_{>0}\ln((\vect{s}^{K})^{T}\vect{x}^{K})
+\overset{\text{(\Cref{lma:poten-fn-lb})}}{\le}
+G(\vect{x}^{K},\vect{s}^{K})\le -(q-n)\ln(1/\varepsilon)+n\ln n
+=(q-n)\ln\varepsilon+n\ln n,
+\]
+which implies that \((\vect{s}^{K})^{T}\vect{x}^{K}\le \varepsilon\).
+\end{pf}
+\item\label{it:poten-redu-idea} \textbf{Idea of the potential reduction
+algorithm.} \Cref{thm:poten-redu-iter-num} serves a theoretical justification
+on why algorithms based on reducing the potential function work. Next, we are
+going to answer an important related question: \emph{How} can such algorithm be
+designed? In the following, we will explore the intuitive idea behind the
+potential reduction algorithm.
+
+In each iteration of the affine scaling algorithm, recall that we are solving
+the following minimization problem:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{d}
+=\vect{c}^{T}(\vect{x}+\vect{d})-\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{d}=\vect{0} \\
+&\|X^{-1}\vect{d}\|\le\beta
+\end{align*}
+where \(\beta\in(0,1)\) and \(X=\diag{x_1,\dotsc,x_n}\), with
+\(\vect{x}=(x_1,\dotsc,x_n)>\vect{0}\) being the primal feasible solution in
+the iteration; here the objective function is the change in the objective value
+after the movement.
+
+To adapt it for the case here, it is natural to consider the following problem:
+\begin{align*}
+\text{min}\quad&G(\vect{x}+\vect{d},\vect{s})-G(\vect{x},\vect{s}) \\
+\text{s.t.}\quad&A\vect{d}=\vect{0} \\
+&\|X^{-1}\vect{d}\|\le\beta
+\end{align*}
+where the objective function is the change in the potential function after the
+movement. However, such objective would generally be nonlinear and so the
+optimization problem is usually hard to solve. To make the problem more
+manageable, we approximate the objective function
+\(G(\vect{x}+\vect{d},\vect{s})-G(\vect{x},\vect{s})\) through a first-order
+Taylor expansion of \(G\) at \((\vect{x},\vect{s})\):
+\(G(\vect{x}+\vect{d},\vect{s})-G(\vect{x},\vect{s})
+=\nabla_{\vect{x}}G(\vect{x},\vect{s})^{T}\vect{d}+O(\|\vect{d}\|^{2})\), where
+\(\nabla_{\vect{x}}\) denotes the gradient containing partial derivatives with
+respect to the variables in \(\vect{x}\).
+
+After performing such approximation, we consider the following simplified
+problem:
+\begin{align*}
+\text{min}\quad&\nabla_{\vect{x}}G(\vect{x},\vect{s})^{T}\vect{d} \\
+\text{s.t.}\quad&A\vect{d}=\vect{0} \\
+&\|X^{-1}\vect{d}\|\le\beta
+\end{align*}
+One important observation is that this problem is essentially the problem
+handled in \labelcref{it:min-over-ellip}, with ``\(\vect{c}\)'' being
+\(\widehat{\vect{c}}:=\nabla_{\vect{x}}G(\vect{x},\vect{s})\), and therefore
+admits a closed-form solution as suggested by \Cref{prp:min-ellip-closed-form},
+namely
+\[
+\boxed{\vect{d}^{*}=-\beta\frac{X^{2}(\widehat{\vect{c}}-A^{T}\widehat{\vect{p}})}
+{\|X(\widehat{\vect{c}}-A^{T}\widehat{\vect{p}})\|}
+=-\beta X\frac{\vect{u}}{\|\vect{u}\|}}
+\]
+with \(\widehat{\vect{p}}=(AX^{2}A^{T})^{-1}AX^{2}\widehat{\vect{c}}\)
+and \(\vect{u}=X(\widehat{\vect{c}}-A^{T}\widehat{\vect{p}})\).
+
+\item \textbf{Further expressions of \(\vect{u}\) and the change
+\(G(\vect{x}+\vect{d}^{*},\vect{s})-G(\vect{x},\vect{s})\).} Since we
+can explicitly derive the expression of
+\(\nabla_{\vect{x}}G(\vect{x},\vect{s})\), we are able to obtain a more
+explicit expression of \(\vect{u}\). Noting that
+\[
+\widehat{c}_i=\pdv{G(\vect{x},\vect{s})}{x_i}
+=\pdv{}{x_i}\left(q\ln\sum_{i=1}^{n}s_ix_i-\sum_{i=1}^{n}\ln x_i
+-\sum_{i=1}^{n}\ln s_i\right)
+=\frac{qs_i}{\vect{s}^{T}\vect{x}}-\frac{1}{x_i}
+\quad\text{for all \(i=1,\dotsc,n\),}
+\]
+we get
+\((X\widehat{\vect{c}})_{i}=x_i\widehat{\vect{c}}_i
+=\frac{q}{\vect{s}^{T}\vect{x}}x_is_i-1\), and hence
+\(X\widehat{\vect{c}}=\frac{q}{\vect{s}^{T}\vect{x}}X\vect{s}-\vect{1}\)
+with \(\vect{1}=(1,\dotsc,1)\in\R^{n}\). It follows that
+\[
+\vect{u}=(I-XA^{T}(AX^{2}A^{T})^{-1}AX)X\widehat{\vect{c}}
+=\boxed{(I-(AX)^{T}(AX^{2}A^{T})^{-1}AX)
+\left(\frac{q}{\vect{s}^{T}\vect{x}}X\vect{s}-\vect{1}\right)}.
+\]
+For the change \(G(\vect{x}+\vect{d}^{*},\vect{s})-G(\vect{x},\vect{s})\) in
+potential function, we have
+\[
+G(\vect{x}+\vect{d}^{*},\vect{s})-G(\vect{x},\vect{s})
+=\vc{\nabla_{\vect{x}}G(\vect{x},\vect{s})^{T}\vect{d}^{*}}
++O(\|\vect{d}^{*}\|^{2})
+\overset{\text{(\Cref{prp:min-ellip-closed-form})}}{=}
+=\vc{-\beta\|\vect{u}\|}+O(\beta^{2}).
+\]
+It can be shown that with a fixed \(\gamma\in (0,1)\), if \(\|\vect{u\|}\ge
+\gamma\), then the potential function is guaranteed to be reduced by at least a
+constant (depending on the value of \(\gamma\)) in each iteration, and
+therefore \Cref{thm:poten-redu-iter-num} is applicable. In case
+\(\|\vect{u}\|<\gamma\), updating the primal feasible solution alone would not
+be enough for achieving a sufficient reduction in the potential function, and
+hence one would need to update the \emph{dual} feasible solution also to
+achieve that. This leads to the \emph{potential reduction algorithm}.
+\item \textbf{Steps in the potential reduction algorithm.} The \defn{potential
+reduction algorithm} is as follows.
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(Inputs)} Specify the following inputs:
+\begin{enumerate}
+\item data of the standard form LP problem: \(A\), \(\vect{b}\), and
+\(\vect{c}\), where \(A\) is assumed to have linearly independent rows
+\item the initial primal and dual feasible solutions: \(\vect{x}^{0}\) and
+\((\vect{p}^{0},\vect{s}^{0})\), with \(\vect{x}^{0}>\vect{0}\) and
+\(\vect{s}^{0}>\vect{0}\)
+\item the optimality tolerance \(\varepsilon>0\)
+\item the parameters \(\beta\in (0,1)\), \(\gamma\in (0,1)\), and \(q>n\).
+\end{enumerate}
+\item \emph{(Initialization)} Set \(k\leftarrow 0\).
+\item \emph{(Optimality check)} If
+\((\vect{s}^{k})^{T}\vect{x}^{k}<\varepsilon\), then stop and conclude that
+\(\vect{x}^{k}\) and \(\vect{p}^{k}\) are \(\varepsilon\)-optimal for the
+primal and dual respectively.
+\item \emph{(Computing update direction)} Based on
+\(\vect{x}^{k}=(x_1^{k},\dotsc,x_n^{k})\), set:
+\begin{itemize}
+\item \(X_k\leftarrow\diag{x_1^{k},\dotsc,x_n^{k}}\)
+\item \(\bar{A}^{k}\leftarrow (AX_k)^{T}(AX_k^{2}A^{T})^{-1}AX_k\)
+\item \(\displaystyle \vect{u}^{k}\leftarrow (I-\bar{A}^{k})\left(\frac{q}
+{(\vect{s}^{k})^{T}\vect{x}^{k}}X_k\vect{s}^{k}-\vect{1}\right)\)
+\item \(\vect{d}^{k}\leftarrow -\beta X_k\vect{u}^{k}/\|\vect{u}^{k}\|\)
+\end{itemize}
+\item \emph{(Primal step)} If \(\|\vect{u}^{k}\|\ge\gamma\), then set:
+\begin{itemize}
+\item \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}+\vect{d}^{k}\)
+\item \(\vect{s}^{k+1}\leftarrow \vect{s}^{k}\)
+\item \(\vect{p}^{k+1}\leftarrow \vect{p}^{k}\)
+\end{itemize}
+\item \emph{(Dual step)} If \(\|\vect{u}^{k}\|<\gamma\), then set:
+\begin{itemize}
+\item \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}\)
+\item \(\displaystyle \vect{s}^{k+1}\leftarrow
+\frac{(\vect{s}^{k})^{T}\vect{x}^{k}}{q}(X_k)^{-1}(\vect{u}^{k}+\vect{1})\)
+\item \(\displaystyle \vect{p}^{k+1}\leftarrow \vect{p}^{k}
++(AX_k^{2}A^{T})^{-1}(AX_{k})
+\left(X_k\vect{s}^{k}-\frac{(\vect{s}^{k})^{T}\vect{x}^{k}}{q}\vect{1}\right)\).
+\end{itemize}
+\item \emph{(Repeating prior steps)} Set \(k\leftarrow k+1\) and go back to (3).
+\end{enumerate}
+\begin{note}
+Here we shall omit the details about the deviation of the formulas in the dual
+step.
+\end{note}
+\end{enumerate}
+\subsection{Primal Path Following Algorithm}
+\begin{enumerate}
+\item The last type of interior point methods to be discussed in
+\Cref{sect:int-pt-methods} is known as the \emph{primal path following
+algorithm}. Although it is perhaps the most complex one among the three here,
+it has the most superior performance and has wide applicability in practice.
+As suggested by its name, the algorithm is about \underline{following} a
+\underline{path} in the \underline{primal} feasible region, in order to find an
+optimal solution. Indeed, this path following algorithm is somewhat similar to
+the potential reduction algorithm conceptually, as both take the closedness to
+the boundary into the account and try to travel along a trajectory
+(``path'' here) that is relatively far from the boundary, through introducing
+a penalty term.
+\item \textbf{Barrier problems.} We shall motivate the path following algorithm
+by the notion of \emph{barrier problems}. Consider a standard form LP problem
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b} \\
+&\vect{x}\ge \vect{0}
+\end{align*}
+In solving this LP problem, a major difficulty arises from the inequality
+constraint \(\vect{x}\ge\vect{0}\); generally, equality constraints are easier
+to deal with. One method to ``get rid of'' the inequality constraint (more
+precisely, ``converting'' it to some other form) is to analyze the
+associated \emph{barrier problems} instead, as specified in the following.
+
+Let \(\mu>0\). The function
+\(B_{\mu}(\vect{x})=\vect{c}^{T}\vect{x}\overbrace{-\mu\sum_{j=1}^{n}\ln
+x_j}^{\text{penalty term}}\) is known as the \defn{(log) barrier function},
+where we conventionally define \(B_{\mu}(\vect{x}):=\infty\) if \(x_j\le 0\)
+for some \(j\). Then, the family of \defn{barrier problems} is given by
+\begin{align*}
+\text{min}\quad&B_{\mu}(\vect{x}) \\
+\text{s.t.}\quad&A\vect{x}=\vect{b}
+\end{align*}
+for every \(\mu>0\); each \(\mu>0\) corresponds to one barrier problem, and the
+larger the \(\mu\) is, the stronger the penalty is in effect. Here, we assume
+that the parameters are set such that the barrier problem has a unique optimal
+solution \(\vect{x}^{*}=\vect{x}(\mu)\) for every \(\mu>0\). Note that the
+optimal solution must satisfy that \(\vect{x}(\mu)>\vect{0}\), for otherwise
+the objective function of the barrier problem would be \(-\infty\) at
+the optimal solution \(\vect{x}(\mu)\), which is impossible. Particularly, this
+implies that \(\vect{x}(\mu)\) always lies in the original feasible region
+\(P\) for all \(\mu>0\).
+\item\label{it:cen-path-ana-cen} \textbf{Central path and analytic center.}
+Considering \(\vect{x}(\mu)\) as a function of \(\mu\) with
+\(\vect{x}:(0,\infty)\to P\), varying the parameter \(\mu\) would produce a
+\emph{path} traced by \(\vect{x}(\mu)\) inside the feasible region \(P\), which
+is known as the \defn{central path}. It can be shown that \(\lim_{\mu\to
+0}\vect{x}(\mu)\) exists and equals an optimal solution to the original LP
+problem; intuitively, this happens since with a very small \(\mu\), the penalty
+would be negligible and hence the optimal solution to the barrier problem would
+be extremely close to the optimal solution to the original LP problem.
+
+Further insights about the central path can be gained by inspecting the
+following graphical illustration:
+\begin{center}
+\begin{tikzpicture}
+\draw[blue] (0,3) -- (2,4)  -- (5,2) -- (3,0) -- (1,0.5) -- cycle;
+\draw[dashed, violet] (-1.5,\fpeval{3-2.25}) -- (1.5,\fpeval{3+2.25});
+\draw[-Latex, violet] (1,4.5) --node[midway, above]{\(\vect{c}\)} (1.75,4);
+\draw[magenta, fill] (0,3) circle [radius=0.7mm];
+\draw[ForestGreen] (2,1.8) .. controls (2,2.5) and (1.5,3) .. (0,3);
+\draw[black, fill] (1.97,2.1) circle [radius=0.5mm];
+\node[] () at (2.6,2.1) {\small{\(\vect{x}(100)\)}};
+\draw[black, fill] (1.76,2.5) circle [radius=0.5mm];
+\node[] () at (2.3,2.5) {\small{\(\vect{x}(10)\)}};
+\draw[black, fill] (1.1,2.85) circle [radius=0.5mm];
+\node[] () at (1.5,2.95) {\small{\(\vect{x}(1)\)}};
+\node[magenta] () at (0,3.3) {\(\vect{x}^{*}\)};
+\end{tikzpicture}
+\end{center}
+As we increase \(\mu\), the penalty effect is more significant, creating a
+stronger force to ``push away'' the resulting optimal solution
+\(\vect{x}(\mu)\) from the boundary of the feasible region, which makes
+\(\vect{x}(\mu)\) farther from the actual optimal solution \(\vect{x}^{*}\),
+but also being more ``deep inside'' the feasible region. Intuitively, letting
+\(\mu\to\infty\) would make \(\vect{x}(\mu)\) approach to the ``center'' of the
+feasible region (a point that is the ``farthest'' from the boundary). Such
+point \(\lim_{\mu\to\infty}\vect{x}(\mu)\) is said to be the \defn{analytic
+center} of the polyhedron \(P\). \begin{note}
+There are multiple kinds of centers for a polyhedron, just like the case for
+triangle, where different types of ``center'' should be studied in high school.
+\end{note}
+
+The analytic center is also the optimal solution to the ``penalty-only'' problem
+\begin{align*}
+\text{min}\quad&-\sum_{j=1}^{n}\ln x_j \\
+\text{s.t.}\quad&A\vect{x}=\vect{b}.
+\end{align*}
+Intuitively, this is because as \(\mu\to\infty\), the penalty effect dominates
+and the original objective function would not play a role in affecting the
+resulting optimal solution anymore.
+\item \textbf{Solving barrier problems with approximations.} As suggested by
+\labelcref{it:cen-path-ana-cen}, one way to obtain/approximate an optimal
+solution to the original LP problem is to compute \(\vect{x}(\mu)\) with
+\(\mu\) being close to zero. However, barrier problem is generally
+\emph{difficult} to solve \warn{} due to the nonlinearity of objective
+function. Therefore, like the potential reduction algorithm, we need to first
+simplify the barrier problem through some approximations.
+
+In the case of potential reduction algorithm, we need to simplify a problem
+with feasible region being an ellipsoid \emph{(nonlinear)} and we have used a
+first-order Taylor approximation. On the other hand, here the feasible region
+of optimization problem is only a polyhedron
+\(\{\vect{x}\in\R^{n}:A\vect{x}=\vect{b}\}\) \emph{(linear)}, and only using a
+first-order Taylor approximation here would not be too interesting (and also
+not enough for the theoretical results to work!). In view of this, we will
+consider a \emph{second-order} Taylor approximation here.
+
+Fix any \(\vect{x}>\vect{0}\). Note that
+\begin{align*}
+\pdv{B_{\mu}(\vect{x})}{x_i}&=c_i-\frac{\mu}{x_i}\quad\forall i=1,\dotsc,n, \\
+\pdv[order=2]{B_{\mu}(\vect{x})}{x_i}&=\frac{\mu}{x_i^{2}}
+\quad\forall i=1,\dotsc,n, \\
+\pdv{B_{\mu}(\vect{x})}{x_i,x_j}&=0\quad\forall i\ne j.
+\end{align*}
+Hence, with \emph{sufficiently small} \(\vect{d}\), by second-order
+Taylor expansion we have
+\[
+B_{\mu}(\vect{x}+\vect{d})-B_{\mu}(\vect{x})\approx
++\pdv{B_{\mu}(\vect{x})}{x_i}d_i
++\frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n}
+\pdv{B_{\mu}(\vect{x})}{x_i,x_j}d_{i}d_{j}
+=(\vect{c}^{T}-\mu\vect{1}^{T}X^{-1})\vect{d}
++\frac{1}{2}\mu\vect{d}^{T}(X^{-1})^{2}\vect{d}
+\]
+where \(X=\diag{x_1,\dotsc,x_n}\). Based on this approximation, we will then
+consider the following minimization problem, in terms of direction \(\vect{d}\)
+at \(\vect{x}\):
+\begin{align*}
+\text{min}\quad&(\vect{c}^{T}-\mu\vect{1}^{T}X^{-1})\vect{d}
++\frac{1}{2}\mu\vect{d}^{T}(X^{-1})^{2}\vect{d}\\
+\text{s.t.}\quad&A\vect{d}=\vect{0}.
+\end{align*}
+\item\label{it:newton-dir-fmla} \textbf{Newton direction.} Like the case of
+potential reduction algorithm, this problem admits closed-form solution, but
+this time it does not directly follow from previous results; we need to do some
+work on solving the problem.  More specifically, we will utilize the method of
+\emph{Lagrange multiplier} (from MATH2211). First, associate a vector
+\(\vect{p}\) of Lagrange multipliers to the equality constraint
+\(A\vect{d}=\vect{0}\) and form the Lagrangian function
+\[
+L(\vect{d},\vect{p})=
+\underbrace{(\vect{c}^{T}-\mu\vect{1}^{T}X^{-1})\vect{d}
++\frac{1}{2}\mu\vect{d}^{T}(X^{-1})^{2}\vect{d}}_{\text{objective}}
+-\vect{p}^{T}\overbrace{A\vect{d}}^{\mathclap{\text{LHS of equality constraint}}}.
+\]
+Then, we need to solve the following system (with \(m+n\) equations and \(m+n\)
+unknowns):
+\begin{align*}
+\pdv{L(\vect{d},\vect{p})}{d_j}&=0\quad\forall j=1,\dotsc,n, \\
+\pdv{L(\vect{d},\vect{p})}{p_i}&=0\quad\forall i=1,\dotsc,m.
+\end{align*}
+More explicitly, it can be expressed in vector form as
+\begin{align*}
+\vect{c}-\mu X^{-1}\vect{1}+\mu(X^{-1})^{2}\vect{d}-A^{T}\vect{p}&=\vect{0}, \\
+A\vect{d}&=\vect{0}.
+\end{align*}
+Solving this system gives the solutions
+\begin{align*}
+\vect{d}(\mu)&=\left(I-X^{2}A^{T}(AX^{2}A^{T})^{-1}A\right)
+\left(X\vect{1}-\frac{1}{\mu}X^{2}\vect{c}\right), \\
+\vect{p}(\mu)&=(AX^{2}A^{T})^{-1}A(X^{2}\vect{c}-\mu X\vect{1}).
+\end{align*}
+The solution \(\vect{d}(\mu)\) is called the \defn{Newton direction}.  We have
+the name ``\underline{Newton} direction'' since the method described here is
+indeed an instance of the \emph{Newton's method} in optimization, which is to
+optimize recursively \emph{local} quadratic models based on gradient and
+Hessian. Here, the second-order Taylor expansion involves gradient and Hessian,
+and also such approximation only works \emph{locally} (with sufficiently small
+\(\vect{d}\)). The Newton direction serves as an useful tool for avoiding
+the exact computation of \(\vect{x}(\mu)\) in the path following algorithm.
+
+\item\label{it:apx-cent-path} \textbf{Approximation of central path.} The idea
+of using the Newton direction for approximating the central path (``following
+that path'' approximately) is as follows.
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(Initialization)} Specify \(\vect{x}^{0}>0\), \(\mu^{0}\), and
+\(0<\alpha<1\),
+and set \(k\leftarrow 0\).
+\item \emph{(Computing Newton direction)} Using the formula in
+\labelcref{it:newton-dir-fmla}, compute the Newton direction
+\(\vect{d}(\mu^{k})\) at \(\vect{x}^{k}\).
+\item \emph{(Updating position and parameter)} Set \(\vect{x}^{k+1}\leftarrow
+\vect{x}^{k}+\vect{d}(\mu^{k})\) and \(\mu^{k+1}\leftarrow \alpha \mu^{k}\)
+\emph{(reducing the parameter)}.
+\item Repeat (2)-(3) with \(k\leftarrow k+1\).
+\end{enumerate}
+In this process, we have \(\{\mu^{k}\}\to 0\) and \(\vect{x}^{k}\) remains
+close to \(\vect{x}(\mu^{k})\), allowing us to obtain fairly good
+approximations to \(\lim_{\mu\to 0}\vect{x}(\mu)\) with direct computations of
+\(\vect{x}(\mu)\) avoided. Graphically, it looks like the following,
+which suggests the iterates \(\vect{x}^{k}\)'s would travel in a ``zigzag''
+trajectory that ``follows the path''.
+\begin{center}
+\begin{tikzpicture}
+\draw[blue] (0,3) -- (2,4)  -- (5,2) -- (3,0) -- (1,0.5) -- cycle;
+\draw[dashed, violet] (-1.5,\fpeval{3-2.25}) -- (1.5,\fpeval{3+2.25});
+\draw[-Latex, violet] (1,4.5) --node[midway, above]{\(\vect{c}\)} (1.75,4);
+\draw[magenta, fill] (0,3) circle [radius=0.7mm];
+\draw[ForestGreen] (2,1.8) .. controls (2,2.5) and (1.5,3) .. (0,3);
+\draw[black, fill] (1.97,2.1) circle [radius=0.5mm];
+\node[] () at (2.6,2.1) {\small{\(\vect{x}(\mu^{k})\)}};
+\draw[black, fill] (1.1,2.85) circle [radius=0.5mm];
+\node[] () at (0.9,2.5) {\small{\(\vect{x}(\mu^{k+1})\)}};
+\node[magenta] () at (0,3.3) {\(\vect{x}^{*}\)};
+
+\draw[brown, fill] (1.75,2.1) circle [radius=0.5mm];
+\node[brown] () at (1.5,2.1) {\small{\(\vect{x}^{k}\)}};
+
+\draw[brown, fill] (1.3,3) circle [radius=0.5mm];
+\node[brown] () at (1.9,3.1) {\small{\(\vect{x}^{k+1}\)}};
+
+\draw[-Latex, brown] (1.75,2.1) -- (1.3,2.95);
+\end{tikzpicture}
+\end{center}
+\item \textbf{Steps in the primal path following algorithm.} Building upon this
+idea of approximating the central path by the Newton direction, we are now
+ready to describe the \defn{primal path following algorithm} as follows.
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(Inputs)} Specify the following inputs:
+\begin{enumerate}
+\item data of the standard form LP problem: \(A\), \(\vect{b}\), and
+\(\vect{c}\), where \(A\) is assumed to have linearly independent rows
+\item the initial primal and dual feasible solutions: \(\vect{x}^{0}\) and
+\((\vect{p}^{0},\vect{s}^{0})\), with \(\vect{x}^{0}>\vect{0}\) and
+\(\vect{s}^{0}>\vect{0}\)
+\item the optimality tolerance \(\varepsilon>0\)
+\item the initial barrier parameter \(\mu^{0}\) and the parameter \(\alpha\in
+(0,1)\)
+\end{enumerate}
+\item \emph{(Initialization)} Set \(k\leftarrow 0\).
+\item \emph{(Optimality check)} If
+\((\vect{s}^{k})^{T}\vect{x}^{k}<\varepsilon\),  then stop and conclude that
+\(\vect{x}^{k}\) and \(\vect{p}^{k}\) are \(\varepsilon\)-optimal for the
+primal and dual respectively.
+\item \emph{(Computing Newton direction)} Set:
+\begin{itemize}
+\item \(X_k\leftarrow \diag{x_1^{k},\dotsc,x_n^{k}}\)
+\item \(\mu^{k+1}\leftarrow \alpha\mu^{k}\)
+\item \(\vect{p}^{*},\vect{d}^{*}\leftarrow\text{the solutions
+\(\vect{p},\vect{d}\) to the following system:}\)
+\begin{align*}
+\mu^{k+1}(X_k^{-1})^{2}\vect{d}-A^{T}\vect{p}
+&=\mu^{k+1}X_{k}^{-1}\vect{1}-\vect{c}, \\
+A\vect{d}&=\vect{0}
+\end{align*}
+\begin{note}
+When solving problems, it is perhaps more practical to substitute the numerical
+values into the system and then solve it directly, rather than memorizing
+\faIcon{brain} the lengthy formulas in \labelcref{it:newton-dir-fmla}.
+\end{note}
+\end{itemize}
+\item \emph{(Updating solutions)} Set:
+\begin{itemize}
+\item \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}+\vect{d}\)
+\item \(\vect{p}^{k+1}\leftarrow \vect{p}\)
+\item \(\vect{s}^{k+1}\leftarrow \vect{c}-A^{T}\vect{p}\)
+\end{itemize}
+\item \emph{(Repeating prior steps)} Set \(k\leftarrow k+1\) and go back to
+(3).
+\end{enumerate}
+\begin{remark}
+\item \emph{(Number of iterations needed)} The number of iterations taken for
+getting \(\varepsilon\)-optimal solutions is related to the choices of the
+inputs; see \textcite[Theorem 9.7]{bertsimas1997introduction}.
+\item \emph{(Performance)} It can be shown that this algorithm does run in
+polynomial time; see \textcite{bertsimas1997introduction} for more details.
+\item \emph{(Primal-dual path following algorithm)} The word ``primal'' in the
+``primal path following algorithm'' indicates that the algorithm focuses on
+updating the solutions for the \emph{primal} problem, and approximating central
+path in the \emph{primal} feasible region. An extension is available, known as
+the \emph{primal-dual path following algorithm}, which do these for both the
+primal and dual problems, and hence, as one may expect, exhibit an even better
+performance. Hence, the primal-dual path following algorithm is the standard
+interior point method used in many software due to its superior performance.
+However, we shall discuss it in details here; see \textcite[Section
+9.5]{bertsimas1997introduction}.
+\end{remark}
 \end{enumerate}

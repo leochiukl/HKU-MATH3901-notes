@@ -260,15 +260,15 @@ ellipsoid \(E_t\) and a halfspace that passes through the center of \(E_t\),
 which is said to be a \defn{half-ellipsoid}.
 \begin{center}
 \begin{tikzpicture}
-\node[] () at (-2,-1.5) {\(E_{k}\)};
+\node[] () at (-2,-1.5) {\(E_{t}\)};
 \draw[blue, rotate=15] (0,0) ellipse [x radius=4cm, y radius=2.5cm];
-\draw[blue, fill] (0,0) circle [radius=0.7mm];
-\node[] () at (-0.1,-0.4) {\(\vect{x}_t\)};
 \draw[green, fill, opacity=0.3] (0.5,0.5) -- (3,1.3) -- (2.5,0.3) --
 (2.1,-0.2) -- (0.8,-0.2) -- cycle;
 \node[] () at (1,1.2) {\(P\)};
 \draw[magenta, thick] (0.2,1.2) -- (1.1,-0.8996);
 \draw[magenta, thick] (-1.5,3.4995) -- (1.5,-3.4995);
+\draw[blue, fill] (0,0) circle [radius=0.7mm];
+\node[] () at (-0.1,-0.4) {\(\vect{x}_t\)};
 \begin{scope}
 \clip[] (-1, 2.3333) -- (1,-2.3333) -- (5,-2.3333) -- (5,4) -- cycle;
 \draw[fill, orange, opacity=0.1, rotate=15] (0,0) ellipse [x radius=4cm, y radius=2.5cm];
@@ -280,15 +280,15 @@ covers the half-ellipsoid, with volume being only a fraction of that of the
 previous ellipsoid \(E_t\):
 \begin{center}
 \begin{tikzpicture}
-\node[] () at (-2,-1.5) {\(E_{k}\)};
+\node[] () at (-2,-1.5) {\(E_{t}\)};
 \draw[blue, rotate=15] (0,0) ellipse [x radius=4cm, y radius=2.5cm];
-\draw[blue, fill] (0,0) circle [radius=0.7mm];
-\node[] () at (-0.1,-0.4) {\(\vect{x}_t\)};
 \draw[green, fill, opacity=0.3] (0.5,0.5) -- (3,1.3) -- (2.5,0.3) --
 (2.1,-0.2) -- (0.8,-0.2) -- cycle;
 \node[] () at (1,1.2) {\(P\)};
 \draw[magenta, thick] (0.2,1.2) -- (1.1,-0.8996);
 \draw[magenta, thick] (-1.5,3.4995) -- (1.5,-3.4995);
+\draw[blue, fill] (0,0) circle [radius=0.7mm];
+\node[] () at (-0.1,-0.4) {\(\vect{x}_t\)};
 \begin{scope}
 \clip[] (-1, 2.3333) -- (1,-2.3333) -- (5,-2.3333) -- (5,4) -- cycle;
 \draw[fill, orange, opacity=0.1, rotate=15] (0,0) ellipse [x radius=4cm, y radius=2.5cm];
@@ -309,9 +309,9 @@ works.
 
 Next, we will prove mathematical results that justify the ellipsoid method.
 \item \textbf{Construction of those ellipsoids.} The first result to be
-established is an explicit way of constructing the ellipsoids that satisfy the
+established is an explicit way of constructing ellipsoids that satisfy the
 aforementioned properties. Particularly, we will provide a formula that computes
-the next ellipsoid \(E_{t+1}\) given the ellipsoid \(E_{k}\).
+``next ellipsoid'' \(E_{t+1}\) given the ellipsoid \(E_{k}\).
 
 \begin{theorem}[Formula for ``next ellipsoid'']
 \label{thm:next-ellipsoid-fmla}

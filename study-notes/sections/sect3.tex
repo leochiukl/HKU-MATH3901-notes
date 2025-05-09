@@ -432,13 +432,14 @@ satisfied.
 \end{pf}
 
 \begin{remark}
-\item For (b), one can verify that the \emph{complementary slackness} property is
-also satisfied by \(\vect{x}\in\R^n\) and \(\vect{y}_{B}\in\R^m\): For every
-\(j=1,\dotsc,n-m\), we have \(x_{N(j)}=0\); for every \(i=1,\dotsc,m\), we have
+\item For (b), one can verify that the \emph{complementary slackness} property
+is also satisfied by \(\vect{x}\in\R^n\) and \(\vect{y}_{B}\in\R^m\) under such
+conditions: For every \(j=1,\dotsc,n-m\), we have \(x_{N(j)}=0\); for every
+\(i=1,\dotsc,m\), we have
 \(c_{B(i)}-\vect{A}_{B(i)}^{T}\vect{y}_{B}\overset{\text{(proof above)}}{=}0\).
 Hence, by \Cref{thm:optim-comp-slackness}, we can conclude that
 \(\vect{x}\in\R^n\) and \(\vect{y}_{B}\in\R^m\) are optimal solutions to the
-primal and the dual problems respectively.
+primal and the dual problems respectively, under such conditions.
 \item The vector \(\vect{y}_{B}=(B^{-1})^{T}\vect{c}_{B}\) is sometimes known as the \defn{dual basic
 solution} associated with the basis matrix \(B\).
 \end{remark}

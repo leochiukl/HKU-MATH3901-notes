@@ -63,8 +63,8 @@ through several case studies on the possible changes to the LP problem in the
 following.
 
 \item \textbf{Case Study 1: Changes in the vector \(\vect{c}\).} Here we
-consider the special case where we change \(c_j\to c_j+\delta\) for a certain
-\(j=1,\dotsc,n\) only. Because there is no change on \(A\) and \(\vect{b}\),
+consider the special case where we change \(c_i\to c_i+\delta\) for a certain
+\(i=1,\dotsc,n\) only. Because there is no change on \(A\) and \(\vect{b}\),
 the feasibility condition \(B^{-1}\vect{b}\ge\vect{0}\) always remains valid.
 So, for the basis matrix \(B\) to remain optimal, we just need
 \(\bar{\vect{c}}'=\vect{c}'-A^{T}(B^{-1})^{T}\vect{c}_{B}'\ge\vect{0}\). The situation
@@ -73,11 +73,11 @@ preserving optimality and (ii) change in optimal value (assuming the condition
 for preserving optimality is satisfied):
 \begin{itemize}
 \item \emph{Case 1: \(x_i\) is a nonbasic variable.} In this case, changing
-\(c_j\to c_j+\delta\) would not affect \(\vect{c}_{B}\), so
-\(\vect{c}_{B}'=\vect{c}_{B}\). Hence, \(\bar{c}_i'\ge 0\) for every \(j\ne i\).
+\(c_i\to c_i+\delta\) would not affect \(\vect{c}_{B}\), so
+\(\vect{c}_{B}'=\vect{c}_{B}\). Hence, \(\bar{c}_j'\ge 0\) for every \(j\ne i\).
 \begin{enumerate}[label={(\arabic*)}]
 \item \emph{Condition for preserving optimality:} To ensure that
-\(\bar{c}_i'\ge 0\) also, we would need 
+\(\bar{c}_i'\ge 0\) also, we would need
 \[
 \bar{c}_i'\ge 0
 \iff \underbrace{c_i-\vect{A}_i^{T}(B^{-1})^{T}\vect{c}_{B}}_{\bar{c}_i}+\delta\ge 0
@@ -89,7 +89,7 @@ not affected by the change, the change in optimal value is \(\boxed{0}\).
 \end{enumerate}
 \item \emph{Case 2: \(x_i\) is a basic variable.} This case is more complicated
 as changing \(c_i\to c_i+\delta\) would affect \(\vect{c}_{B}\). Writing
-\(j=B(\ell)\) for some \(\ell\), the change \(c_i\to c_i+\delta\) would lead to
+\(i=B(\ell)\) for some \(\ell\), the change \(c_i\to c_i+\delta\) would lead to
 the following change: \(\vect{c}_{B}\to\vect{c}_{B}+\delta\vect{e}_{\ell}\).
 \begin{enumerate}[label={(\arabic*)}]
 \item \emph{Condition for preserving optimality:} Since \(x_i\) is a basic
@@ -101,14 +101,16 @@ Next, for every \(j\ne i\), we can write
 &=\orc{c_j-\vect{A}_j^{T}(B^{-1})^{T}\vect{c}_{B}}-\delta\vc{\vect{A}_j^{T}(B^{-1})^{T}\vect{e}_{\ell}} \\
 &=\orc{\bar{c}_j}-\delta\vc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j},
 \end{align*}
-so \(\bar{c}_j'\ge 0\iff \boxed{\bar{c}_j\ge \delta\mgc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j}}\),
+and hence \(\bar{c}_j'\ge 0\iff \bar{c}_j\ge \delta\mgc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j}\).
+Thus, the condition for preserving optimality is 
+\(\boxed{\bar{c}_j\ge \delta\mgc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j}~\forall j\ne i}\)
 where \(\mgc{\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j}\) is the \(\ell\)th entry of
 \(B^{-1}\vect{A}_j\), i.e., the intersection of the \(j\)th column and
 \(\ell\)th row in the tableau from the simplex method:
 \begin{center}
 \begin{tabular}{cccc}
 \toprule
-\(-\vect{c}_{B}^{T}\vect{x}_{B}\)&\(\cdots\)&\(\bar{c}_{\ell}\)&\(\cdots\) \\
+\(-\vect{c}_{B}^{T}\vect{x}_{B}\)&\(\cdots\)&\(\bar{c}_{j}\)&\(\cdots\) \\
 \midrule
 \(\vdots\)&\(\vert\)&&\(\vert\) \\
 \(x_{B(\ell)}\)&\(\cdots\)&\mgc{\(\vect{e}_{\ell}^{T}B^{-1}\vect{A}_j\)}&\(\cdots\) \\
@@ -156,7 +158,7 @@ vector \(\vect{b}\), we use the notation
 denote the feasible set of the LP problem given the vector \(\vect{b}\).
 Now, let \(S:=\{\vect{b}:P(\vect{b})\text{ is nonempty}\}=\{\vect{A}\vect{x}:\vect{x}\ge\vect{0}\}\).
 
-Then, for every \(\vect{b}\in S\), we define \(F(\vect{b}):=\min_{x\in
+Then, for every \(\vect{b}\in S\), we define \(F(\vect{b}):=\min_{\vect{x}\in
 P(\vect{b})}\vect{c}^{T}\vect{x}\), which gives the optimal value of the LP
 problem, as a function of \(\vect{b}\). By construction of \(S\), we know
 \(F(\vect{b})<\infty\) always. To study the dependence of the LP problem on the
@@ -321,7 +323,7 @@ their values:
 \end{itemize}
 In \Cref{subsect:para-programming}, we will study a special case where the
 \emph{exact} optimal value can be efficiently determined as a function of a
-\underline{parameter} \(\theta\) that drives the change on the vector
+\underline{parameter} \(\theta\) that drives the changes on the vector
 \(\vect{c}\) (hence the name \underline{parametric} programming).
 
 \item \textbf{Setup.} Again, we start by defining a function \(g\) by
@@ -436,7 +438,7 @@ then perform the usual EROs on the tableau to change the basis.
 \end{itemize}
 \item For each resulting tableau, go back to step 2 to determine the bounds on
 \(\theta\) and the corresponding value of \(g(\theta)\), and then proceed to
-step 3 again...
+step 3 again \faIcon{redo}...
 
 \emph{Example:} For the tableau obtained from the case with \(\theta>3\)
 slightly, the reduced costs are all nonnegative iff \(3\le \theta\le 5.5/1.5\).

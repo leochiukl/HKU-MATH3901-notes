@@ -49,8 +49,8 @@ value} (always unique, if exists), and \emph{every}
 We use \(\inf/\sup\) rather than \(\min/\max\) in the definition of optimal
 value to allow for more flexibility, e.g., for a minimization problem, if the
 objective function is not bounded below on \(S\), ``\(\inf\)'' would give
-\(-\infty\) while ``\(\min\)'' would not exist; in such case, no optimal
-solution exists.
+\(-\infty\) while ``\(\min\)'' would not exist. Note that in such case, while
+we have a ``\(-\infty\)'' optimal value, no optimal solution actually exists.
 \end{note}
 \end{itemize}
 An optimization problem is said to be \defn{feasible} if the feasible region is
@@ -376,12 +376,12 @@ equivalent, providing some insights on the proof of \Cref{thm:to-std-form-lp}.
 
 \begin{pf}
 First fix any feasible solution \((x_1,x_2)=(a,b)\) to (A). Then, consider the
-solution \((x_1,x_2^{+},x_2^{-},x_3)=(a,b^{+},b^{-},3-a-(b^{+}-b^{-}))\) (why?).
+solution \((x_1,x_2^{+},x_2^{-},x_3)=(a,b^{+},b^{-},3-a-(b^{+}-b^{-}))\).
 It is straightforward to check that this solution is feasible for (B) and has
 the same objective value (because \(b\equiv b^{+}-b^{-}\)).
 
 Now fix any feasible solution \((x_1,x_2^{+},x_2^{-},x_3)=(a,b,c,d)\) to (B).
-Then, consider the solution \((x_1,x_2)=(a,b-c)\) (why?).  Again, it is
+Then, consider the solution \((x_1,x_2)=(a,b-c)\).  Again, it is
 straightforward to check that this solution is feasible for (A) and has the
 same objective value.
 \end{pf}
@@ -1030,8 +1030,8 @@ zero as well (those \(x_{B(k+1)},\dotsc,x_{B(m)}=0\)), which would yield
 \emph{more than \(n\)} active constraints at a basic solution \(\vect{x}\),
 since we already have \(n\) active constraints from \(A\vect{x}=\vect{b}\)
 (\(m\) active constraints) and \(x_{N(1)}=\dotsb=x_{N(n-m)}=0\) (\(n-m\) active
-constraints). Such basic solution with more than \(n\) active constraints (or
-equivalently, with some basic variables being \(0\)) is called
+constraints). Such basic solution with more than \(n\) active constraints (here
+this is equivalent to having some basic variables being \(0\)) is called
 \defn{degenerate}. Geometrically, a degenerate basic solution is at the
 intersection of three of more lines in two dimensions, or at the intersection
 of four or more planes in three dimensions, etc.
