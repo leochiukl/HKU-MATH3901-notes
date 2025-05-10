@@ -1,0 +1,174 @@
+\section{Integer Linear Programming}
+\label{sect:ilp}
+\begin{enumerate}
+\item So far, we have focused on analyzing linear programming problems, where
+the decision variables are real-valued, corresponding to ``continuous''
+optimization problems. However, in practice many variables cannot be modeled as
+real numbers, e.g., number of people must be integers, which bring in
+``discreteness'' in optimization problems. This shows a limitation of the
+linear programming framework. To handle those problems where some
+variables can be integers, we need to consider another class of optimization
+problems, known as \emph{integer linear programming (ILP) problems}.
+\end{enumerate}
+\subsection{Definition and Modelling Techniques}
+\begin{enumerate}
+\item \textbf{Definition.} An \defn{integer linear programming problem} can be
+expressed as
+\begin{align*}
+\text{min/max}\quad&f(\vect{x})=\vect{c}^{T}\vect{x}=c_1x_1+\dotsb+c_nx_n \\
+\text{s.t.}\quad&\vect{a}_j^{T}\vect{x}\le/=/\ge b_j \text{ for all
+\(j=1,\dotsc,m\),} \\
+&\vc{\text{some/all \(x_j\)'s are integers.}}
+\end{align*}
+\item Of course, one clear and important application of ILP is to model
+linear optimization problems with some integer variables. But this is not the
+only reason for studying ILP. Another more \emph{theoretical} motivation for
+developing ILP is that integer variables, while being ``discrete'', turn out
+to be helpful for modelling more complex ``continuous'' constraints also.
+Unfortunately, there is no general ``rule'' for how this can be done, unlike
+the procedure of reducing general LP problem to standard form as in
+\labelcref{it:reduce-to-std-form}. Here, we will investigate one useful method
+for doing this, namely through the usage of \emph{binary variables} to describe
+case-dependent constraints, e.g., ``either-or constraints''.
+
+\item \textbf{Modelling constraints through binary variables.} A \defn{binary
+variable} \(x\) is one that can only takes values \(0\) or \(1\). To include a
+binary variable \(x\) into an ILP problem, we can use the relationship
+\(x\in\{0,1\}\) iff \(x\) is integer and \(0\le x\le 1\), where the latter two
+constraints are permissible in an ILP problem. In view of this, sometimes we
+just write something like ``\(x\in\{0,1\}\)'' in an ILP problem directly, which
+is understood to refer to the two constraints specified above.
+
+To illustrate the usage of binary variables for modelling constraints, consider
+the following example of optimization problem involving an ``either-or''
+constraint:
+\begin{align*}
+\text{min}\quad&-3x_1+2x_2 \\
+\text{s.t.}\quad&x_1+x_2\ge 2\text{ or }x_1+2x_2\ge 3.
+\end{align*}
+To deal with the ``either-or'' constraint \(x_1+x_2\ge 2\text{ or }x_1+2x_2\ge
+3\), we can introduce a binary variable \(y\in\{0,1\}\) and express it as
+\begin{align*}
+x_1+x_2&\ge 2y \\
+x_1+2x_2&\ge 3(1-y) \\
+y&\in\{0,1\}.
+\end{align*}
+The \(y\)'s on the right-hand side of the inequalities serve as a ``switch'':
+If \(y=1\), then the inequality \(x_1+x_2\ge 2\) must be satisfied. If
+\(y=0\), then the inequality \(x_1+2x_2\ge 3\) must be satisfied.
+\item\label{it:model-disj-const} \textbf{Modelling disjunctive constraints.} In general, we
+can also deal with ``either-or'' constraints involving more than two
+inequalities \emph{(disjunctive constraints)}. Suppose that we are given \(m\)
+constraints \(\vect{a}_{i}^{T}\vect{x}\ge b_i,\quad i=1,\dotsc,m\), with
+\(\vect{a}_i\ge\vect{0}\) for every \(i\), and at least \(k\) of them need to
+be satisfied. To model this disjunctive constraint, we can introduce \(m\)
+binary variables \(y_1,\dotsc,y_m\) and express it as
+\begin{align*}
+\vect{a}_{i}^{T}\vect{x}&\ge b_iy_i\quad\forall i=1,\dotsc,m, \\
+\sum_{i=1}^{m}y_i&\ge k, \\
+y_i&\in\{0,1\}\quad\forall i=1,\dotsc,m
+\end{align*}
+Here, the \(y_i\)'s serve as both ``switches'' and also count the number of
+inequalities satisfied, which is given by \(\sum_{i=1}^{m}y_i\).
+\end{enumerate}
+\subsection{Cutting Plane Algorithm}
+\begin{enumerate}
+\item After briefly studying how the ILP is useful for modelling constraints,
+we are then interested in knowing how ILP problems can be \emph{solved}.
+Unfortunately, this is in general a difficult task, and algorithms for solving
+ILPs are often somewhat inefficient. Here, we will provide an overview of a
+relatively basic algorithm for solving ILPs, known as \emph{cutting plane
+algorithm}, for dealing with ILPs where all variables are required to be
+integers:
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b}, \\
+&\vect{x}\ge\vect{0}, \\
+&\text{\(\vect{x}\) integer.}
+\end{align*}
+\begin{note}
+Here ``\(\vect{x}\) integer'' means that \(x_j\) is an integer for every
+\(j=1,\dotsc,n\).
+\end{note}
+
+The cutting plane algorithm is developed based on the observation that, if the
+LP problem with the integer variables constraint dropped \emph{(relaxed
+problem)},
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b}, \\
+&\vect{x}\ge\vect{0},
+\end{align*}
+results in an optimal solution with all variables being integers, then such
+solution would be also optimal for the ILP problem above.
+\item\label{it:cut-plane-algo} \textbf{Steps in the cutting plane algorithm.}
+Consider the ILP
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b}, \\
+&\vect{x}\ge\vect{0}, \\
+&\text{\(\vect{x}\) integer.}
+\end{align*}
+with its LP relaxation
+\begin{align*}
+\text{min}\quad&\vect{c}^{T}\vect{x} \\
+\text{s.t.}\quad&A\vect{x}=\vect{b}, \\
+&\vect{x}\ge\vect{0}.
+\end{align*}
+Suppose that the LP problem has a finite optimal value.
+The \defn{cutting plane algorithm} is carried out as follows.
+\begin{enumerate}[label={(\arabic*)}]
+\item \emph{(Optimality check)} Find an optimal solution \(\vect{x}^{*}\) to
+the LP problem. If \(\vect{x}^{*}\) contains only integer variables, then
+conclude that \(\vect{x}^{*}\) is optimal for the ILP problem.
+
+\begin{note}
+The \emph{dual simplex method} is often helpful for finding such optimal
+solution to the LP problem.
+\end{note}
+
+\item \emph{(Finding a cutting plane)} If some entries of \(\vect{x}^{*}\) are
+not integers, then find a \defn{cutting plane}
+\(\{\vect{x}\in\R^{n}:\vect{a}^{T}\vect{x}\ge b\}\) that separates
+\(\vect{x}^{*}\) from all integer feasible solutions, which satisfies: (i)
+\(\vect{a}^{T}\vect{x}^{*}<b\) and (ii) \(\vect{a}^{T}\vect{x}\ge b\) for every
+integer feasible solution to the ILP.
+
+\begin{note}
+It can be shown that such cutting plane always exists; see also
+\labelcref{it:cut-plane-optim-bfs} for a special case where a ``formula'' for
+cutting plane is available.
+\end{note}
+
+\item \emph{(Adding constraint to the LP problem)} Add the constraint
+\(\vect{a}^{T}\vect{x}\ge b\) to the LP problem, and go back to (1).
+\end{enumerate}
+The basic idea is that, with the constraint \(\vect{a}^{T}\vect{x}\ge b\)
+added to the LP problem, a new optimal solution to the LP problem results, and
+also no integer feasible solution is lost in the process by construction of the
+cutting plane. Then, intuitively, we would be able to get an integer optimal
+solution ``eventually''. Here, we shall not delve into the details about the
+theoretical justification of this method.
+\item\label{it:cut-plane-optim-bfs} \textbf{Finding a cutting plane for optimal
+basic feasible solution.} To carry out the cutting plane algorithm in
+\labelcref{it:cut-plane-algo}, we would need to find a cutting plane in each
+iteration, but there is not a general way to do that. Nevertheless, in the
+special case where the \(\vect{x}^{*}\) found is an optimal \emph{basic
+feasible solution} to the LP problem (which is the case if the dual simplex
+method is used to find the optimal solution), a cutting plane is given by
+\(\boxed{\sum_{i\in I_N}^{}x_i\ge 1}\) where \(I_N\) is the set of all nonbasic
+indices for \(\vect{x}^{*}\) (whenever some entries in \(\vect{x}^{*}\) are not
+integers).
+
+\begin{pf}
+First, we have \(\sum_{i\in I_N}^{}x_{i}^{*}=\sum_{i\in I_N}^{}0=0<1\), since
+every nonbasic variable is zero by definition. Next, fix any integer feasible
+solution \(\vect{x}\ge\vect{0}\). Assume to the contrary that \(\sum_{i\in
+I_N}^{}x_i<1\), which implies that \(\sum_{i\in I_N}^{}x_i=0\), i.e., \(x_i=0\)
+for all \(i\in I_N\). But then this means that \(B\vect{x}_{B}
+=B\vect{x}_{B}+N\vect{x}_{N}=A\vect{x}=\vect{b}\), and hence
+\(\vect{x}_{B}=B^{-1}\vect{b}=\vect{x}_{B}^{*}\). Therefore, we have
+\(\vect{x}=\vect{x}^{*}\), suggesting that some entries in \(\vect{x}\) are not
+integers, contradiction.
+\end{pf}
+\end{enumerate}
