@@ -44,27 +44,35 @@ the following example of optimization problem involving an ``either-or''
 constraint:
 \begin{align*}
 \text{min}\quad&-3x_1+2x_2 \\
-\text{s.t.}\quad&x_1+x_2\ge 2\text{ or }x_1+2x_2\ge 3.
+\text{s.t.}\quad&x_1+x_2\ge 2\text{ or }x_1+2x_2\ge 3 \\
+\quad&x_1,x_2\ge 0
 \end{align*}
 To deal with the ``either-or'' constraint \(x_1+x_2\ge 2\text{ or }x_1+2x_2\ge
 3\), we can introduce a binary variable \(y\in\{0,1\}\) and express it as
 \begin{align*}
 x_1+x_2&\ge 2y \\
 x_1+2x_2&\ge 3(1-y) \\
+x_1,x_2&\ge 0 \\
 y&\in\{0,1\}.
 \end{align*}
 The \(y\)'s on the right-hand side of the inequalities serve as a ``switch'':
-If \(y=1\), then the inequality \(x_1+x_2\ge 2\) must be satisfied. If
-\(y=0\), then the inequality \(x_1+2x_2\ge 3\) must be satisfied.
-\item\label{it:model-disj-const} \textbf{Modelling disjunctive constraints.} In general, we
-can also deal with ``either-or'' constraints involving more than two
-inequalities \emph{(disjunctive constraints)}. Suppose that we are given \(m\)
-constraints \(\vect{a}_{i}^{T}\vect{x}\ge b_i,\quad i=1,\dotsc,m\), with
-\(\vect{a}_i\ge\vect{0}\) for every \(i\), and at least \(k\) of them need to
-be satisfied. To model this disjunctive constraint, we can introduce \(m\)
-binary variables \(y_1,\dotsc,y_m\) and express it as
+If \(y=1\), then the inequality \(x_1+x_2\ge 2\) must be satisfied, and the
+other inequality just becomes \(x_1+2x_2\ge 0\), which is always satisfied
+as \(x_1,x_2\ge 0\), so it does not affect the feasible region in such case.
+Similarly, if \(y=0\), then the inequality \(x_1+2x_2\ge 3\) must be satisfied,
+and the other inequality, \(x_1+x_2\ge 0\) in this case, is always satisfied.
+
+\item\label{it:model-disj-const} \textbf{Modelling disjunctive constraints.} In
+general, we can also deal with ``either-or'' constraints involving more than
+two inequalities \emph{(disjunctive constraints)}. Suppose that we are given
+\(m\) constraints \(\vect{a}_{i}^{T}\vect{x}\ge b_i,\quad i=1,\dotsc,m\) and
+the sign constraint \(\vect{x}\ge\vect{0}\), with \(\vect{a}_i\ge\vect{0}\) for
+every \(i\), and at least \(k\) of the \(m\) constraints need to be satisfied.
+To model this disjunctive constraint, we can introduce \(m\) binary variables
+\(y_1,\dotsc,y_m\) and express it as
 \begin{align*}
 \vect{a}_{i}^{T}\vect{x}&\ge b_iy_i\quad\forall i=1,\dotsc,m, \\
+\vect{x}&\ge\vect{0}, \\
 \sum_{i=1}^{m}y_i&\ge k, \\
 y_i&\in\{0,1\}\quad\forall i=1,\dotsc,m
 \end{align*}

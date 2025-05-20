@@ -16,7 +16,7 @@ point methods, namely (i) the \emph{affine scaling algorithm}, (ii) the
 algorithm}. Among the three types of interior point methods, the affine
 scaling algorithm should be the simplest one, so we first study this algorithm.
 \end{enumerate}
-\subsection{The Affine Scaling Algorithm}
+\subsection{Affine Scaling Algorithm}
 \begin{enumerate}
 \item \textbf{Geometrical intuition.} Consider a standard form LP
 \begin{align*}
@@ -832,7 +832,7 @@ reduction algorithm} is as follows.
 \((\vect{p}^{0},\vect{s}^{0})\), with \(\vect{x}^{0}>\vect{0}\) and
 \(\vect{s}^{0}>\vect{0}\)
 \item the optimality tolerance \(\varepsilon>0\)
-\item the parameters \(\beta\in (0,1)\), \(\gamma\in (0,1)\), and \(q>n\).
+\item the parameters \(\beta\in (0,1)\), \(\gamma\in (0,1)\), and \(q>n\)
 \end{enumerate}
 \item \emph{(Initialization)} Set \(k\leftarrow 0\).
 \item \emph{(Optimality check)} If
@@ -881,7 +881,7 @@ As suggested by its name, the algorithm is about \underline{following} a
 optimal solution. Indeed, this path following algorithm is somewhat similar to
 the potential reduction algorithm conceptually, as both take the closedness to
 the boundary into the account and try to travel along a trajectory
-(``path'' here) that is relatively far from the boundary, through introducing
+(path) that is relatively far from the boundary, through introducing
 a penalty term.
 \item \textbf{Barrier problems.} We shall motivate the path following algorithm
 by the notion of \emph{barrier problems}. Consider a standard form LP problem
@@ -952,7 +952,8 @@ feasible region (a point that is the ``farthest'' from the boundary). Such
 point \(\lim_{\mu\to\infty}\vect{x}(\mu)\) is said to be the \defn{analytic
 center} of the polyhedron \(P\). \begin{note}
 There are multiple kinds of centers for a polyhedron, just like the case for
-triangle, where different types of ``center'' should be studied in high school.
+triangle, where different types of ``center'' should have been studied in high
+school.
 \end{note}
 
 The analytic center is also the optimal solution to the ``penalty-only'' problem
