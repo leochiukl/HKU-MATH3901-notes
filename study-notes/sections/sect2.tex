@@ -299,10 +299,10 @@ feasible solution(s) being the optimal solution(s).
 
 However, this method has some disadvantages \faIcon[regular]{thumbs-down}:
 \begin{itemize}
-\item \emph{(assumption on the finiteness of optimal value)} The optimal value
+\item \emph{(Assumption on the finiteness of optimal value)} The optimal value
 is required to be finite, but we may not know whether this is the case before
 solving the LP problem.
-\item \emph{(computational cost)} When the values of \(m\) and \(n\) are large,
+\item \emph{(High computational cost)} When the values of \(m\) and \(n\) are large,
 there would be a very large number of basic feasible solutions to be
 considered, leading to a high computational cost.
 \end{itemize}
@@ -335,9 +335,9 @@ direction would lead to a change of \(\vect{c}^{T}\vect{d}<0\) in the objective
 function value (a decrease), which is what we want. Hence, we will choose the
 direction \(\vect{d}\) as follows:
 \begin{itemize}
-\item \emph{(non-basic variables)} \(\boxed{d_{j}=1}\) and \(\boxed{d_{j'}=0}\) for all
+\item \emph{(Non-basic variables)} \(\boxed{d_{j}=1}\) and \(\boxed{d_{j'}=0}\) for all
 non-basic indices \(j'\ne j\).
-\item \emph{(basic variables)} \(\boxed{\vect{d}_{B}}=-B^{-1}N\vect{d}_{N}
+\item \emph{(Basic variables)} \(\boxed{\vect{d}_{B}}=-B^{-1}N\vect{d}_{N}
 \overset{\text{(\(j=N(i)\) for some \(i\))}}{=}
 -B^{-1}N\vect{e}_i
 =-B^{-1}\vect{A}_{N(i)}
@@ -544,12 +544,12 @@ We have \(\vect{u}=-\vect{d}_{B}=B^{-1}\vect{A}_j\).
 From this expression, we can observe that the following sequence of EROs can
 turn \(B^{-1}\bar{B}\) to \(I_m\):
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(changing \(u_{\ell}\to 1\))} First perform the ERO
+\item \emph{(Changing \(u_{\ell}\to 1\))} First perform the ERO
 \((1/u_{\ell})\vect{r}_{\ell}\to\vect{r}_{\ell}\).
 \begin{note}
 We have \(u_{\ell}>0\) by the definition of \(\ell\).
 \end{note}
-\item \emph{(zeroizing the \(i\)th entry of the column \(\vect{u}\) for all \(i\ne\ell\))}
+\item \emph{(Zeroizing the \(i\)th entry of the column \(\vect{u}\) for all \(i\ne\ell\))}
 For all \(i\ne\ell\), perform the ERO
 \(-u_i\vect{r}_{\ell}+\vect{r}_{i}\to\vect{r}_{i}\) (i.e., adding
 \(-u_i\) times the \(\ell\)th row to the \(i\)th row).
@@ -901,9 +901,9 @@ is known as the \defn{Bland's pivoting rule}. The essential idea is to always
 choose the one with the \emph{smallest index} when there are multiple possible
 candidates:
 \begin{itemize}
-\item \emph{(entering basis)} Find the smallest \(j\) where the reduced cost \(\bar{c}_j\) is negative
+\item \emph{(Entering basis)} Find the smallest \(j\) where the reduced cost \(\bar{c}_j\) is negative
 and let the column \(\vect{A}_j\) enters the basis.
-\item \emph{(exiting basis)} Among all variables \(x_i\) that are tied in the test for choosing the
+\item \emph{(Exiting basis)} Among all variables \(x_i\) that are tied in the test for choosing the
 exiting variable, select the one with the smallest value of \(i\).
 \end{itemize}
 Example:

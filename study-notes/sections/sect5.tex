@@ -81,7 +81,7 @@ Consider the LP problem
 \begin{align*}
 \text{min}\quad&-x_n \\
 \text{s.t.}\quad&\varepsilon\le x_1\le 1-\varepsilon \\
-&\varepsilon x_{i_1}\le x_i\le 1-\varepsilon x_{i-1}\text{ for all \(i=2,\dotsc,n\).}
+&\varepsilon x_{i-1}\le x_i\le 1-\varepsilon x_{i-1}\text{ for all \(i=2,\dotsc,n\).}
 \end{align*}
 \begin{enumerate}
 \item The feasible region has \(2^n\) vertices.
@@ -144,10 +144,10 @@ where \(\vect{z}\in\R^n\) and \(D\in\R^{n\times n}\) is positive definite.
 \end{tikzpicture}
 \end{center}
 \begin{remark}
-\item \emph{(positive definiteness)} A matrix \(D\in\R^{n\times n}\) is
+\item \emph{(Positive definiteness)} A matrix \(D\in\R^{n\times n}\) is
 \defn{positive definite} if it is symmetric and we have
 \(\vect{x}^{T}D\vect{x}>0\) for all \(\vect{x}\ne\vect{0}\).
-\item \emph{(special case --- ball)} By taking \(D=rI\) with \(r>0\) (check
+\item \emph{(Special case --- ball)} By taking \(D=r^{2}I\) with \(r>0\) (check
 that it is indeed positive definite!), the ellipsoid \(E(\vect{z},r^{2}I)\)
 would become a \emph{ball} centered at \(\vect{z}\) with radius \(r\). From
 this, we can see that the notion of \emph{ellipsoid} is a generalization to
@@ -172,10 +172,10 @@ geometrical concepts.} After learning the definitions of the geometrical
 concepts in \labelcref{it:ellip-method-geo}, we will study some of
 their properties here.
 \begin{enumerate}
-\item \emph{(characterization of positive definite matrix)} A matrix
+\item \emph{(Characterization of positive definite matrix)} A matrix
 \(D\in\R^{n\times n}\) is positive definite iff all of its eigenvalues are
 real and positive.
-\item \emph{(properties of positive definite matrices)} If \(D\in\R^{n\times
+\item \emph{(Properties of positive definite matrices)} If \(D\in\R^{n\times
 n}\) is positive definite, then:
 \begin{enumerate}
 \item \emph{(Spectral theorem)} It has a diagonalization \(D=P^{-1}\Lambda P\)
@@ -191,7 +191,7 @@ entry is the square root of the corresponding one from \(\Lambda\).
 ball centered at \(\vect{0}\). Then, the ellipsoid \(E(\vect{z},D)\) can be
 expressed as \(S(B)\) with the affine transformation
 \(S(\vect{x})=D^{1/2}\vect{x}+\vect{z}\).
-\item \emph{(volume formula after affine transformation)} Let \(L\subseteq
+\item \emph{(Volume formula after affine transformation)} Let \(L\subseteq
 \R^n\) and \(S(\vect{x})=D\vect{x}+\vect{b}\) be an affine transformation. Then
 \(\vol{S(L)}=|\det D|\vol{L}\).
 
@@ -468,14 +468,14 @@ have \(v\le \vol{P}\le V\).
 Knowing \(\vect{x}_0\), \(r\), \(v\), and \(V\), the ellipsoid method can then
 be implemented as follows.
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(initialization)}
+\item \emph{(Initialization)}
 \begin{itemize}
 \item \(t^{*}\leftarrow\lceil 2(n+1)\ln(V/v)\rceil\).
 \item \(E_0\leftarrow E(\vect{x}_0,r^{2}I)\).
 \item \(D_0\leftarrow r^{2}I\).
 \item \(t\leftarrow 0\).
 \end{itemize}
-\item \emph{(main iteration)} Repeat the following steps until termination.
+\item \emph{(Main iteration)} Repeat the following steps until termination.
 \begin{enumerate}
 \item If \(t=t^{*}\), conclude that \(P\) is empty and stop \faIcon[regular]{pause-circle}.
 \item If \(\vect{x}_t\in P\), conclude that \(P\) is nonempty and stop
@@ -571,10 +571,10 @@ bound on the absolute values of the entries in \(A\) and
 \(\vect{b}\).\footnote{Such \(U\) always exists as there are only finitely many
 entries here.} Suppose that the polyhedron \(P\) in consideration has a vertex.
 \begin{enumerate}
-\item \emph{(general form)} Every vertex \(\vect{x}=(x_1,\dotsc,x_n)\) of the polyhedron
+\item \emph{(General form)} Every vertex \(\vect{x}=(x_1,\dotsc,x_n)\) of the polyhedron
 \(P=\{\vect{x}\in\R^n:A\vect{x}\ge\vect{b}\}\) satisfies \(|x_j|\le (nU)^{n}\)
 for every \(j=1,\dotsc,n\).
-\item \emph{(standard form)} Every vertex \(\vect{x}=(x_1,\dotsc,x_n)\) of the polyhedron
+\item \emph{(Standard form)} Every vertex \(\vect{x}=(x_1,\dotsc,x_n)\) of the polyhedron
 \(P=\{\vect{x}\in\R^n:A\vect{x}=\vect{b}, \vect{x}\ge\vect{0}\}\) satisfies
 \(|x_j|\le (mU)^{m}\) for every \(j=1,\dotsc,n\).
 \end{enumerate}
@@ -993,7 +993,6 @@ We will solve this problem by the ellipsoid method.  By
 ellipsoid method can be completed with polynomially many operations (it indeed
 takes some work to establish this), it suffices to show that its number of
 iterations needed would be \(O(n^k)\) for some \(k\in\N\).
-\end{pf}
 
 From \labelcref{it:ellip-method-implement} we know that the number of
 iterations needed for the ellipsoid method is at most \(t^{*}=\lceil 2(n+1)\ln
@@ -1049,6 +1048,7 @@ O(n^{4}n^{2}\ln (nU))
 So, the number of iterations needed in general would be \(O(n^{6}\ln nU)\).
 Furthermore, since \(\ln nU\le nU\), we can indeed write it as \(O(n^{6}(nU))=O(n^{7})\),
 as desired.
+\end{pf}
 \item\label{it:ellip-method-solve-lp-poly-time} \textbf{Solving LPs with
 integer data by the ellipsoid method in polynomial time.} Previously, we have
 only applied the ellipsoid method for solving linear \emph{feasibility}

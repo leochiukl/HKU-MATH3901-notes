@@ -172,11 +172,11 @@ integers).
 First, we have \(\sum_{i\in I_N}^{}x_{i}^{*}=\sum_{i\in I_N}^{}0=0<1\), since
 every nonbasic variable is zero by definition. Next, fix any integer feasible
 solution \(\vect{x}\ge\vect{0}\). Assume to the contrary that \(\sum_{i\in
-I_N}^{}x_i<1\), which implies that \(\sum_{i\in I_N}^{}x_i=0\), i.e., \(x_i=0\)
-for all \(i\in I_N\). But then this means that \(B\vect{x}_{B}
-=B\vect{x}_{B}+N\vect{x}_{N}=A\vect{x}=\vect{b}\), and hence
-\(\vect{x}_{B}=B^{-1}\vect{b}=\vect{x}_{B}^{*}\). Therefore, we have
-\(\vect{x}=\vect{x}^{*}\), suggesting that some entries in \(\vect{x}\) are not
-integers, contradiction.
+I_N}^{}x_i<1\), which implies that \(\sum_{i\in I_N}^{}x_i=0\) (as it is a
+nonnegative integer), i.e., \(x_i=0\) for all \(i\in I_N\). But then this means
+that \(B\vect{x}_{B} =B\vect{x}_{B}+N\vect{x}_{N}=A\vect{x}=\vect{b}\), and
+hence \(\vect{x}_{B}=B^{-1}\vect{b}\overset{\text{(optimal basic feasible
+solution)}}{=}\vect{x}_{B}^{*}\). Therefore, we have \(\vect{x}=\vect{x}^{*}\),
+suggesting that some entries in \(\vect{x}\) are not integers, contradiction.
 \end{pf}
 \end{enumerate}

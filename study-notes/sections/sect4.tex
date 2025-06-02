@@ -140,7 +140,7 @@ Since there are no changes to \(c_1,\dotsc,c_n\) and \(B\), we must have
 \(B^{-1}\vect{b}\ge\vect{0}\) and
 \(\bar{\vect{c}}=\vect{c}-A^{T}(B^{-1})^{T}\vect{c}_{B}\ge\vect{0}\). So we
 only need to ensure that
-\(\boxed{\bar{c}_{n+1}=c_{n+1}-\vect{c}_{B}^{T}B^{-1}\vect{A}_{n+1}^{T}\ge
+\(\boxed{\bar{c}_{n+1}=c_{n+1}-\vect{c}_{B}^{T}B^{-1}\vect{A}_{n+1}\ge
 0}\). When this condition is met, \((\vect{x},x_{n+1})=\boxed{(\vect{x}^*,0)}\) is
 optimal, and the change in optimal value is \(\boxed{0}\) since we have
 \(c_{n+1}x_{n+1}=0\) here.
@@ -196,7 +196,7 @@ of \(\vect{b}\). To see this, note that
 \(\vect{b}\) ``around'' \(\vect{b}^{*}\), \(F\) takes a constant ``slope'' as a
 function of \(\vect{b}\).  Of course, if \(\vect{b}\) is sufficiently far from
 \(\vect{b}^{*}\), the optimal basis matrix may change and so does
-\(\pdv{F}{\vect{b}}\), but \(F\) still takes a constant ``slope''. This shows
+\(\pdv{F}{\vect{b}}\), leading to a different ``constant slope''. This shows
 the piecewise linearity of \(F\) (under the assumption of the existence of such
 nondegenerate primal optimal basic feasible solution always).
 
@@ -225,11 +225,11 @@ function of \(\vect{b}\):
 \label{thm:F-cvx}
 The function \(F\) is a convex function of \(\vect{b}\) on the set \(S\).
 \end{theorem}
-We shall offer two proofs here: one is based on the definition; another is
+We will offer two proofs here: One is based on the definition; another is
 based on the duality theory.
 
 \begin{pf}
-\emph{(by definition)}
+\emph{(Definition)}
 Fix any \(\vect{b}_1,\vect{b}_2\in S\) and any \(\lambda\in[0,1]\). Since the
 optimal value of the standard form LP problem here is finite, it is always
 achieved at some point in the feasible region. Hence, we have
@@ -257,7 +257,7 @@ establishing the convexity.
 \end{pf}
 
 \begin{pf}
-\emph{(by duality theory)}
+\emph{(Duality theory)}
 By strong duality, we know \(F(\vect{b})=\min_{\vect{x}\in P(\vect{b})}\vect{c}^{T}\vect{x}
 =\max_{\vect{y}\in P^*(\vect{c})}\vect{b}^{T}\vect{y}\), which is finite.
 
@@ -316,9 +316,9 @@ So, in some sense, the dependency of the optimal value on \(\vect{c}\)
 \Cref{subsect:global-dep-bc}, generally we can only have some \emph{bounds} on
 their values:
 \begin{itemize}
-\item \emph{(lower bound)} \(F(\vect{b})\ge \vect{b}^{T}\vect{y}_i\) where
+\item \emph{(Lower bound)} \(F(\vect{b})\ge \vect{b}^{T}\vect{y}_i\) where
 \(\vect{y}_i\) is any vertex of the dual feasible region \(P^*(\vect{c})\).
-\item \emph{(upper bound)} \(G(\vect{c})\le \vect{c}^{T}\vect{x}_i\) where
+\item \emph{(Upper bound)} \(G(\vect{c})\le \vect{c}^{T}\vect{x}_i\) where
 \(\vect{x}_i\) is any vertex of the primal feasible region \(P(\vect{b})\).
 \end{itemize}
 In \Cref{subsect:para-programming}, we will study a special case where the

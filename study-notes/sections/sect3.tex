@@ -5,15 +5,13 @@
 LP problems, which are called \emph{primal} and \emph{dual} problems
 respectively. The LP problems we have been working with so far can all be
 treated as \emph{primal} problems. Duality theory provides us another point of
-view on those LP problems through their duals, thereby giving us:
-\begin{itemize}
-\item new tools to analyze those LP problems by \emph{weak duality} and
-\emph{strong duality} (\Cref{thm:weak-duality,thm:strong-duality}),
-\item new optimality conditions like \emph{complementary slackness} (\labelcref{it:comp-slackness}),
-\item new algorithms for solving LPs like \emph{dual simplex method} (\Cref{subsect:dual-simplex-method}).
-\end{itemize}
-Indeed, for general optimization problems, duality plays an important role
-also.
+view on those LP problems through their duals, thereby giving us: (i) new tools
+to analyze those LP problems by \emph{weak duality} and \emph{strong duality}
+(\Cref{thm:weak-duality,thm:strong-duality}), (ii) new optimality conditions
+like \emph{complementary slackness} (\labelcref{it:comp-slackness}), and (iii)
+new algorithms for solving LPs like \emph{dual simplex method}
+(\Cref{subsect:dual-simplex-method}).  Indeed, for general optimization
+problems, duality plays an important role also.
 \end{enumerate}
 \subsection{Primal and Dual Problems}
 \begin{enumerate}
@@ -330,9 +328,9 @@ Consider a primal problem and its dual:
 The vectors \(\vect{x}\in\R^n\) and \(\vect{y}\in\R^m\) are optimal solutions
 to the primal and the dual problems respectively iff
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(primal feasibility)} \(A\vect{x}=\vect{b}\) and \(\vect{x}\ge\vect{0}\).
-\item \emph{(dual feasibility)} \(A^{T}\vect{y}\le\vect{c}\).
-\item \emph{(complementary slackness)} \((c_i-\vect{A}_i^{T}\vect{y})x_i=0\)
+\item \emph{(Primal feasibility)} \(A\vect{x}=\vect{b}\) and \(\vect{x}\ge\vect{0}\).
+\item \emph{(Dual feasibility)} \(A^{T}\vect{y}\le\vect{c}\).
+\item \emph{(Complementary slackness)} \((c_i-\vect{A}_i^{T}\vect{y})x_i=0\)
 for every \(i=1,\dotsc,n\), where \(\vect{A}_i\) is the \(i\)th column of
 \(A\) for every \(i\).
 \end{enumerate}
@@ -372,7 +370,7 @@ The condition that \((c_i-\vect{A}_i^{T}\vect{y})x_i=0\) for every
 that for every \(i=1,\dotsc,n\), one of the inequalities \(x_i\ge 0\) (primal)
 and \(\vect{A}_i^{T}\vect{y}\le c_i\) (dual) must hold \emph{tightly} without
 ``slack'' (i.e., the equality holds); otherwise the expression would be greater
-than \(0\). In other words, appearance of ``\underline{slackness}'' in one
+than \(0\). In other words, the appearance of ``\underline{slackness}'' in one
 inequality must be \underline{complemented} by the ``non-slackness'' in
 another.
 \end{note}
@@ -488,10 +486,10 @@ of the pivot column become \(0\).
 \item Repeat (2)-(5) until the algorithm terminates \faIcon[regular]{pause-circle}.
 \end{enumerate}
 \begin{remark}
-\item \emph{(similarity to the simplex method)}  As one can see, this procedure
+\item \emph{(Similarity to the simplex method)}  As one can see, this procedure
 is quite analogous to the one for the simplex method (see
 \labelcref{it:tableau-algo}), just with something ``flipped''.
-\item \emph{(usefulness)} Since the dual simplex method often turns out to work
+\item \emph{(Usefulness)} Since the dual simplex method often turns out to work
 better than the simplex method in practice, it is considered to be
 practically useful. Besides, the dual simplex method is usually helpful to deal
 with the case where the vector \(\vect{b}\) in the primal problem changes,

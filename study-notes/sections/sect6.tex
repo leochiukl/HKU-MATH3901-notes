@@ -227,13 +227,13 @@ Hence, \(\vect{x}^{*}\) lies in the interior of \(P\).
 \end{pf}
 
 \begin{remark}
-\item \emph{(relationship with the iterations of the affine scaling algorithm)}
+\item \emph{(Relationship with the iterations of the affine scaling algorithm)}
 \Cref{prp:min-ellip-closed-form} demonstrates that our geometrical intuition of
 “forming an ellipsoid and then minimizing over it to move to another point in
 the interior” actually works. It shows that we can indeed perform such
 iterations to incrementally decrease the objective function value while
 remaining in the interior.
-\item \emph{(optimal value of the original problem is \(-\infty\) if
+\item \emph{(Optimal value of the original problem is \(-\infty\) if
 \(\vect{d}^{*}\ge\vect{0}\))} If the optimal solution obtained satisfies
 \(\vect{d}^{*}\ge\vect{0}\), then we can conclude that the optimal value of the
 original minimization problem with respect to \(\vect{x}\) is \(-\infty\).  To
@@ -336,7 +336,7 @@ thus \(\vect{c}^{T}\vect{y}<\vect{b}^{T}\vect{p}+\varepsilon
 algorithm.} We now have enough ingredients to describe the \defn{affine scaling
 algorithm} as follows.
 \begin{enumerate}[label={(\arabic*)}]
-\item \emph{(inputs)} Specify the following inputs:
+\item \emph{(Inputs)} Specify the following inputs:
 \begin{enumerate}
 \item data of the standard form LP problem: \(A\), \(\vect{b}\), and
 \(\vect{c}\), where we assume that the rows of \(A\) are linearly independent
@@ -363,7 +363,7 @@ stop and conclude that the optimal value is \(-\infty\).
 This corresponds to the case where \(\vect{d}^{*}\ge\vect{0}\) in
 \Cref{prp:min-ellip-closed-form}.
 \end{note}
-\item \emph{(moving to another point in the interior and repeating prior steps)}
+\item \emph{(Moving to another point in the interior and repeating prior steps)}
 Set \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}-\beta
 X_k^{2}\vect{r}^{k}/\|X_k\vect{r}^{k}\|\) and then repeat (3)-(5) but with
 \(k\leftarrow k+1\).
@@ -605,7 +605,7 @@ standard form LP problem.
 However, these two goals are indeed conflicting, since being away from boundary
 generally limits the extent of the reduction in the objective function value.
 Nevertheless, these two goals can still be incorporated simultaneously using
-the following \emph{potential function}:
+the following \defn{potential function}:
 \[
 G(\vect{x},\vect{s})=q\ln (\vect{s}^{T}\vect{x})-\sum_{j=1}^{n}\ln x_j
 -\sum_{j=1}^{n}\ln s_j
@@ -866,7 +866,7 @@ primal and dual respectively.
 \item \emph{(Repeating prior steps)} Set \(k\leftarrow k+1\) and go back to (3).
 \end{enumerate}
 \begin{note}
-Here we shall omit the details about the deviation of the formulas in the dual
+Here we shall omit the details about the derivation of the formulas in the dual
 step.
 \end{note}
 \end{enumerate}
@@ -952,8 +952,8 @@ feasible region (a point that is the ``farthest'' from the boundary). Such
 point \(\lim_{\mu\to\infty}\vect{x}(\mu)\) is said to be the \defn{analytic
 center} of the polyhedron \(P\). \begin{note}
 There are multiple kinds of centers for a polyhedron, just like the case for
-triangle, where different types of ``center'' should have been studied in high
-school.
+triangle, which has different types of ``center'' like centroid, incenter,
+circumcenter, and orthocenter.
 \end{note}
 
 The analytic center is also the optimal solution to the ``penalty-only'' problem
@@ -992,7 +992,7 @@ Hence, with \emph{sufficiently small} \(\vect{d}\), by second-order
 Taylor expansion we have
 \[
 B_{\mu}(\vect{x}+\vect{d})-B_{\mu}(\vect{x})\approx
-+\pdv{B_{\mu}(\vect{x})}{x_i}d_i
+\pdv{B_{\mu}(\vect{x})}{x_i}d_i
 +\frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n}
 \pdv{B_{\mu}(\vect{x})}{x_i,x_j}d_{i}d_{j}
 =(\vect{c}^{T}-\mu\vect{1}^{T}X^{-1})\vect{d}
@@ -1127,9 +1127,9 @@ values into the system and then solve it directly, rather than memorizing
 \end{itemize}
 \item \emph{(Updating solutions)} Set:
 \begin{itemize}
-\item \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}+\vect{d}\)
-\item \(\vect{p}^{k+1}\leftarrow \vect{p}\)
-\item \(\vect{s}^{k+1}\leftarrow \vect{c}-A^{T}\vect{p}\)
+\item \(\vect{x}^{k+1}\leftarrow \vect{x}^{k}+\vect{d}^{*}\)
+\item \(\vect{p}^{k+1}\leftarrow \vect{p}^{*}\)
+\item \(\vect{s}^{k+1}\leftarrow \vect{c}-A^{T}\vect{p}^{*}\)
 \end{itemize}
 \item \emph{(Repeating prior steps)} Set \(k\leftarrow k+1\) and go back to
 (3).
